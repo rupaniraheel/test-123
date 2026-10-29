@@ -1,0 +1,21 @@
+{
+  "start": "2024-07-01",
+  "end": "2026-09-30",
+  "as_at": "2026-09-30",
+  "months": 27,
+  "consumption_all": 279530690.96,
+  "consumption_billable": 259518399.91,
+  "purchase_value": 301271940.73,
+  "budget_total": 483640000.0,
+  "budget_product": 337141000.0,
+  "unattributed_value": 5453428.7,
+  "unattributed_pct": 2.1,
+  "beneficiaries": 689230,
+  "po_lines": 14103,
+  "grn_lines": 16781,
+  "issue_lines": 23205,
+  "shortfalls": 54,
+  "projects": 10,
+  "items": 87,
+  "suppliers": 12
+}
