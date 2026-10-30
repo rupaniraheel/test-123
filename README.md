@@ -12,7 +12,9 @@ Business analysis pack for the dashboard **“Consumption Analysis in View of Cu
 | `data/VPT_Consumption_Dataset.xlsx` | Realistic synthetic Oracle-style dataset: 27 months (Jul-2024 → Sep-2026), 14,100 PO lines, 16,800 GRN lines, 23,200 issue lines, plus dimensions, budget and service delivery. |
 | `data/VPT_Consumption_Analysis.xlsx` | Analysis / dashboard workbook built **from** that dataset — 15 sheets of KPIs, trends, project, product, budget, price, stock, supplier and exception views with charts. |
 | `Analytics Question Bank & Data Commentary Guide.docx` | 84-question analytical bank (descriptive / diagnostic / predictive / prescriptive), the six-part data-commentary method, worked examples, cadence, ownership and refresh governance. |
-| `data/Analytics_Question_Bank.xlsx` | Refresh-driven workbook: parameters, the four question banks, **live answers with status flags**, commentary rules and the generated commentary feed, refresh checklist. |
+| `data/Analytics_Question_Bank.xlsx` | Refresh-driven workbook: parameters, five question banks (incl. what-if), **live answers with status flags**, commentary rules and generated commentary feed, refresh checklist. |
+| `data/VPT_WhatIf_Analysis.xlsx` | What-if / scenario workbook: 18 configurable levers, 9 scenarios, live in-Excel calculator, sensitivity tornado, break-even, cover trade-off curve, demand × price grid. |
+| `config/parameters.json` | **The single source of truth** — 15 thresholds + 18 model assumptions + 9 scenarios + sensitivity/break-even/two-way settings. |
 
 ## BRD contents (at a glance)
 
@@ -40,6 +42,18 @@ wireframes, dataset description, requirement traceability)
 
 Organisation, supplier and product names are used for realism only. Replace with Oracle extracts before external use.
 
+## Everything is parameterised
+
+| Layer | Where | Effect of a change |
+|---|---|---|
+| Thresholds (15) | `config/parameters.json → thresholds` | Every Red/Amber/Green flag, commentary trigger and exception rule |
+| Model levers (18) | `config/parameters.json → model` | Every what-if projection: consumption, purchase, gap, expiry, stock-outs, capital |
+| Scenarios (9) | `config/parameters.json → scenarios` | Scenario summary, documents, break-even context |
+| Sensitivity / break-even / two-way | `config/parameters.json` | Tables and charts in the what-if workbook |
+| Baseline facts | recomputed from data at refresh | Nothing to maintain by hand |
+
+No value is typed twice: the generators read the config, so the workbooks, guide and BRD stay consistent.
+
 ## Refresh model (answers change, questions do not)
 
 The question bank is the stable layer: question, purpose, data fields, logic, cadence and owner.
@@ -50,8 +64,9 @@ python3 scripts/refresh_all.py                # full chain: data → findings �
 python3 scripts/refresh_all.py --no-generate  # refresh answers from the existing dataset only
 ```
 
-Chain: `generate_dataset.py` → `analyze_findings.py` (all metrics → `data/findings.json`) →
-`build_analysis.py` → `build_qa_workbook.py` → `build_qa_doc.py` → `build_brd.py`.
-Thresholds live in `scripts/qa_content.py` (`PARAMETERS`) and are reproduced in the workbook's `01_Parameters` sheet.
+Chain: `generate_dataset.py` → `analyze_findings.py` (metrics → `data/findings.json`) →
+`whatif_model.py` (scenarios → `data/whatif_results.json`) → `build_analysis.py` → `build_whatif.py` →
+`build_qa_workbook.py` → `build_qa_doc.py` → `build_brd.py`.
+All thresholds and assumptions come from `config/parameters.json` and are displayed in the `01_Parameters` / `01_Inputs` sheets.
 
 Requires `openpyxl` and `python-docx`.

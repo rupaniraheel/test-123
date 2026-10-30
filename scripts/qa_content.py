@@ -6,29 +6,43 @@ the *answers* and the commentary feed are generated from findings.json.
 """
 
 # ---------------------------------------------------------------- parameters
-PARAMETERS = [
-    ("P-01", "Data as at (report date)", "auto", "Later of last successful load and last closed period",
-     "Shown on every page; drives all 'as at' labels"),
-    ("P-02", "Consumption-to-investment ratio – acceptable band", "0.80 – 1.05", "Ratio",
-     "Below 0.80 = over-purchasing; above 1.05 = drawing down opening stock"),
-    ("P-03", "Consumption variance vs budget – investigate above", "15%", "%",
-     "Variance beyond this band requires written commentary"),
-    ("P-04", "Materiality for mandatory commentary", "PKR 250,000 or 10% of category budget", "PKR / %",
-     "Whichever is lower; below this, comment at category level only"),
-    ("P-05", "Days of cover – critical threshold", "< 30 days", "Days", "Raise purchase requisition immediately"),
-    ("P-06", "Days of cover – watch threshold", "30 – 60 days", "Days", "Include in next monthly purchase plan"),
-    ("P-07", "Days of cover – overstock threshold", "> 180 days", "Days", "Freeze re-ordering; review allocation to other projects"),
-    ("P-08", "Expiry alert window", "60 / 90 / 180 days", "Days", "Redistribute, consume first, or write off before expiry"),
-    ("P-09", "Price variance – investigate above", "10%", "%", "Compare supplier quotes; check contract validity"),
-    ("P-10", "Unattributed consumption ceiling", "1.0% of value", "%", "Above this, escalate to project coding owner"),
-    ("P-11", "Exception ageing before escalation", "30 days", "Days", "Escalate to Head of Procurement"),
-    ("P-12", "Slow-moving lookback", "6 and 12 months", "Months", "Zero issues in lookback with stock on hand = slow-moving"),
-    ("P-13", "Requirement-proposal cover target", "90 days plus supplier lead time", "Days",
-     "Basis of the indicative purchase quantity (BRD FR-40)"),
-    ("P-14", "Stock-out tolerance", "0 critical items with < 15 days cover", "Count", "Any breach is a service risk"),
-    ("P-15", "Budget utilisation expectation", "in line with elapsed project time ± 15%", "%",
-     "Under or over this band needs explanation"),
-]
+import json
+import os
+
+_CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "config", "parameters.json")
+
+
+def load_config(path=None):
+    with open(path or _CONFIG_PATH) as f:
+        return json.load(f)
+
+
+CONFIG = load_config()
+CONFIG_VERSION = CONFIG["version"]
+
+
+def _display(t):
+    """Human-readable value for a threshold, derived from config (never typed twice)."""
+    v, unit = t["value"], t["unit"]
+    if v == "auto":
+        return "auto (from load log)"
+    if unit == "%" and isinstance(v, (int, float)):
+        return f"{v:.0%}"
+    if unit == "PKR":
+        return f"PKR {v:,.0f}"
+    if unit == "Ratio":
+        return v
+    return f"{v}"
+
+
+# (Ref, Parameter, Value, Unit, How it is used) – values come from config/parameters.json
+PARAMETERS = [(t["id"], t["name"], _display(t), t["unit"], t["use"]) for t in CONFIG["thresholds"]]
+
+# model levers: (key, name, value, unit, range, basis, owner)
+MODEL_PARAMETERS = [(m["key"], m["name"], m["value"], m["unit"],
+                     f'{m["min"]} – {m["max"]}', m["basis"], m["owner"]) for m in CONFIG["model"]]
+
+SCENARIOS = CONFIG["scenarios"]
 
 PRODUCT_CATS = ["Medicines", "Medical Consumables", "Laboratory", "Nutrition", "Equipment", "General Items"]
 
@@ -446,6 +460,81 @@ PRESCRIPTIVE = [
      "Exception log with owners and ageing",
      "Assign owner and due date; escalate at P-11 ageing",
      "Action tracker", "Continuous", "Weekly", "Business owner"),
+]
+
+# ---------------------------------------------------------------- what-if questions
+# (id, question, why it matters, levers / data used, how to answer, output, trigger, cadence, owner)
+WHATIF = [
+    ("WF-01", "What happens to consumption, purchasing and the funding gap if demand rises 20%?",
+     "Tests whether the budget and the supply chain can absorb a surge before it happens.",
+     "Demand growth; run-rate; price and policy parameters",
+     "Run the model with demand_growth_pct = 0.20; compare with the baseline scenario",
+     "S1 against S0: consumption, purchase requirement, funding gap", "Gap above zero", "Quarterly / before peak season", "Head of Procurement"),
+    ("WF-02", "Can the budget absorb a 15% price shock on medicines and consumables?",
+     "Price is the second-largest driver of the gap and is outside VPT's control.",
+     "Price inflation and shock levers; category weights",
+     "Run the model with price_shock_pct = 0.15; read the funding gap and utilisation",
+     "S2: gap, utilisation, price effect", "Utilisation above 100%", "Quarterly", "Finance & Grants"),
+    ("WF-03", "How many items would run out if lead times rose 60% and reliability fell to 70%?",
+     "Supply disruption is the fastest route from a good plan to a clinical stock-out.",
+     "Lead-time multiplier; supplier reliability; per-item cover",
+     "Run the model with the disruption levers; count items whose projected cover is below lead time plus safety stock",
+     "S3: stock-out item count and list", "Any critical item", "Quarterly / when a supplier is at risk", "Procurement"),
+    ("WF-04", "What is the exposure if a grant instalment is cut by 20%?",
+     "Funding shocks are decided elsewhere but must be planned for here.",
+     "Funding cut lever; consumption and budget",
+     "Run the model with funding_cut_pct = 0.20; read the gap and the utilisation",
+     "S4: funding gap, months of cover the budget buys", "Gap above materiality", "On any donor signal", "Finance & Grants"),
+    ("WF-05", "How much cash is released if we move from 90 to 60 days of cover?",
+     "Cover policy is the most direct lever management controls.",
+     "Target cover; safety stock; excess stock release",
+     "Run the model at several cover levels; read working capital and purchase requirement",
+     "S5 and the cover trade-off curve", "Capital release above PKR 5m", "Twice yearly", "Head of Procurement"),
+    ("WF-06", "What is the effect of a framework contract at 8% below current prices?",
+     "Tests whether commercial action alone can close the gap.",
+     "Bulk discount; lead time; supplier reliability",
+     "Run the model with bulk_discount_pct = 0.08 and improved supply assumptions",
+     "S6: purchase value, ratio, gap", "Gap reduction", "Before the contract cycle", "Procurement"),
+    ("WF-07", "What is the combined downside if everything moves against us at once?",
+     "Single shocks are survivable; correlated shocks are not.",
+     "Demand, price, lead time, reliability and funding levers together",
+     "Run the combined-lever scenario; compare with S0 and with the single-shock cases",
+     "S7: gap, purchase, stock-outs, expiry", "Any projection beyond tolerance", "Quarterly", "Business owner"),
+    ("WF-08", "How much of that downside can we absorb with the levers we control?",
+     "Separates the unavoidable part of a shock from the part management can manage.",
+     "Policy and commercial levers applied on top of the downside",
+     "Run the optimised-response scenario; take the difference against the downside",
+     "S8 vs S7: gap, purchase and stock-out reduction", "Residual gap remains", "Quarterly", "Business owner"),
+    ("WF-09", "Which parameter should we watch most closely?",
+     "Monitoring effort should follow the size of the effect, not the ease of measurement.",
+     "Sensitivity ranges and all model outputs",
+     "Move each lever between its low and high value and rank by swing (tornado)",
+     "06_Sensitivity ranking", "Swing above 10% of the output", "Quarterly", "Business analyst"),
+    ("WF-10", "How far can price or demand move before the budget breaks?",
+     "Converts the budget position into a tolerance the business can watch.",
+     "Break-even solve on price inflation and demand growth",
+     "Solve for the lever value at which the funding gap becomes zero",
+     "07_BreakEven", "Break-even inside the plausible range", "Quarterly", "Finance & Grants"),
+    ("WF-11", "What is the right stock-cover policy?",
+     "Cover is a trade-off between working capital, purchase cost and stock-out risk.",
+     "Cover trade-off curve (30–210 days)",
+     "Read purchase requirement, expiry risk and working capital across the cover range; choose at the knee of the curve",
+     "07_BreakEven trade-off curve", "Expiry or stock-out above tolerance", "Twice yearly", "Head of Procurement"),
+    ("WF-12", "Which combination of demand growth and inflation puts us over budget?",
+     "Gives a map rather than a single point, so unplanned combinations are visible.",
+     "Two-way table over demand and price",
+     "Read the grid for funding gap and utilisation; locate the current position",
+     "08_TwoWay", "Any red cell in the plausible range", "Quarterly", "Finance & Grants"),
+    ("WF-13", "What if a project ends earlier than planned, or a new project starts mid-year?",
+     "Portfolio changes move every projection; they are not gradual.",
+     "Activity factor; project start and end dates",
+     "Adjust activity_factor for the share of the year the portfolio is active; rerun",
+     "Scenario variant of S0", "Activity factor change above 10%", "On any portfolio change", "Programme"),
+    ("WF-14", "What should we change now so that the downside scenario does not become the baseline?",
+     "The purpose of all of the above: a decision, not a projection.",
+     "All levers, compared across scenarios",
+     "Identify the levers with the largest gap reduction at acceptable cost and risk; convert into actions with owners",
+     "Action plan from S8 vs S7", "Residual gap above materiality", "Quarterly", "Business owner"),
 ]
 
 # ---------------------------------------------------------------- commentary rules

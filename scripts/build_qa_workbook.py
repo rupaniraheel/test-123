@@ -108,19 +108,26 @@ guide = [
      "The questions never change; the answers do."),
     ("How it is organised",
      "02–05: the questions, split into descriptive (what happened), diagnostic (why), predictive (what next) and prescriptive (what to do). "
-     "06: the live answer to every question that can be computed from the data, with a status flag. "
-     "07: the commentary rules (which causes to test, which actions to consider, when to act, who owns it). "
-     "08: the commentary actually triggered by the current data. 09: the refresh checklist and quality gates."),
+     "06: the what-if questions, answered by the scenario engine in VPT_WhatIf_Analysis.xlsx. "
+     "07: the live answer to every question that can be computed from the data, with a status flag. "
+     "08: the commentary rules (which causes to test, which actions to consider, when to act, who owns it). "
+     "09: the commentary actually triggered by the current data. 10: the refresh checklist and quality gates. "
+     "11: coverage against the BRD."),
     ("How answers refresh",
-     "Every value in sheet 06 and every line in sheet 08 is computed from the current extract at build time and stamped with the "
+     "Every value in sheet 07 and every line in sheet 09 is computed from the current extract at build time and stamped with the "
      "data-as-at date. When the data is refreshed, re-run the refresh (script scripts/build_qa_workbook.py, or the equivalent "
      "scheduled job) and all answers, statuses and commentary lines are recomputed. Nothing is hard-coded."),
     ("Status logic",
      "Green = within the tolerance set in 01_Parameters. Amber = outside tolerance but not yet material. "
      "Red = material breach requiring commentary and an owner. Blue = informational, no action implied."),
+    ("Everything is configurable",
+     f"All {len(Q.PARAMETERS)} thresholds and all {len(Q.MODEL_PARAMETERS)} model assumptions live in "
+     f"config/parameters.json (parameter set v{Q.CONFIG_VERSION}). Changing a value there and re-running "
+     "scripts/refresh_all.py changes every status flag, commentary line and scenario result — no code change, no retyping."),
     ("Reading order at each refresh",
-     "1) Check sheet 09 quality gates are passed.  2) Read sheet 08 for what needs attention now.  "
-     "3) Use sheet 06 to answer specific management questions.  4) Use 02–05 as the standing agenda for analysis."),
+     "1) Check sheet 10 quality gates are passed.  2) Read sheet 09 for what needs attention now.  "
+     "3) Use sheet 07 to answer specific management questions.  4) Use 02–06 as the standing agenda, "
+     "including the what-if questions."),
     ("Cadence",
      "Daily: data quality, stock-out risk on critical items.  Weekly: cover, expiry, commitments, procurement actions.  "
      "Monthly: consumption, ratio, budget, cost per beneficiary, commentary.  Quarterly: suppliers, price, efficiency, seasonality."),
@@ -172,8 +179,29 @@ for row in Q.PARAMETERS:
     put(ws, rr, list(row), wrap_cols=(2, 5))
     rr += 1
 ws.cell(row=rr + 1, column=1,
-        value="Threshold values are defaults proposed in the BRD. Approval: Head of Procurement; changes recorded in the change log.").font = SUB
-ws.cell(row=rr + 1, column=1).alignment = Alignment(wrap_text=False)
+        value=f"Parameter set v{Q.CONFIG_VERSION} — these values are loaded from config/parameters.json, not typed here. "
+              f"Approval: Head of Procurement; every change is recorded with the old value, the new value, the reason and the "
+              f"effective date, and applies from the next refresh.").font = SUB
+
+rr += 3
+ws.cell(row=rr, column=1, value="Model parameters that drive the what-if engine (see VPT_WhatIf_Analysis.xlsx)").font = Font(
+    name="Calibri", size=11, bold=True, color=NAVY)
+rr += 1
+header(ws, rr, ["Key", "Parameter", "Value", "Unit", "Range", "Basis", "Owner"])
+rr += 1
+for key, name, val, unit, rng, basis, owner in Q.MODEL_PARAMETERS:
+    v = F["baseline"] if val == "auto" else val
+    if val == "auto":
+        val = 1.0
+    put(ws, rr, [key, name, val, unit, rng, basis, owner], wrap_cols=(2, 6))
+    if unit == "%":
+        ws.cell(row=rr, column=3).number_format = '0.0%'
+    elif unit == "x":
+        ws.cell(row=rr, column=3).number_format = '0.00'
+    rr += 1
+ws.cell(row=rr + 1, column=1,
+        value="Change any of these in config/parameters.json and re-run scripts/refresh_all.py to recalculate every status, "
+              "commentary line and scenario.").font = SUB
 
 # ------------------------------------------------------------------ QUESTION SHEETS
 QB_HEADERS = ["Q ID", "Analytical question", "Why it matters (decision it supports)", "Data required",
@@ -224,8 +252,13 @@ write_questions("05_Q_Prescriptive", "Prescriptive questions – what should we 
                 "The answer to these questions is an action with an owner and a date. If an action cannot be assigned, the question returns to the business owner.",
                 Q.PRESCRIPTIVE, "R", "E45756")
 
+write_questions("06_Q_WhatIf", "What-if questions – what changes if a driver moves?",
+                "These questions are answered by the scenario engine in VPT_WhatIf_Analysis.xlsx. Every lever used is a "
+                "parameter in config/parameters.json, so a scenario can be added or changed without touching code.",
+                Q.WHATIF, "X", "F2A65A")
+
 # ------------------------------------------------------------------ LIVE ANSWERS
-ws, r = sheet("06_Live_Answers", "Live answers – recomputed from data at every refresh",
+ws, r = sheet("07_Live_Answers", "Live answers – recomputed from data at every refresh",
               f"Data as at {F['as_at']}. Every value below is computed from the current extract; statuses use the thresholds in 01_Parameters.",
               widths=[8, 40, 46, 18, 12, 22, 11, 40, 18], tab="72B7B2")
 header(ws, r + 1, ["Q ID", "Stage", "Question", "Answer", "Unit", "Target / band", "Status",
@@ -264,7 +297,7 @@ ws.cell(row=rr + 1, column=1,
               "commentary in sheet 08 — no manual editing is required.").font = SUB
 
 # ------------------------------------------------------------------ COMMENTARY RULES
-ws, r = sheet("07_Commentary_Rules", "Data commentary rules – why, what, when, who",
+ws, r = sheet("08_Commentary_Rules", "Data commentary rules – why, what, when, who",
               "Standing rules applied at every refresh. A commentary line is only written when the metric breaches its threshold in 01_Parameters.",
               widths=[10, 26, 62, 62, 44, 24], tab="F2A65A")
 header(ws, r + 1, ["Rule", "Metric", "Why it happened – causes to test, in order", "What to do – action options",
@@ -572,7 +605,7 @@ COMMENTARY.append({
     "owner": "IT / BI", "escalate": "Head of Procurement",
 })
 
-ws, r = sheet("08_Commentary_Feed", "Live data commentary – what happened, why, so what, now what, when, who",
+ws, r = sheet("09_Commentary_Feed", "Live data commentary – what happened, why, so what, now what, when, who",
               f"Generated from the data as at {F['as_at']}. Each line is produced only because the metric breached its threshold "
               f"in 01_Parameters; on refresh, lines move between Red, Amber and Green automatically.",
               widths=[8, 26, 26, 14, 30, 58, 46, 52, 24, 22], tab="E45756")
@@ -599,7 +632,7 @@ ws.cell(row=rr, column=1,
               "no action without an owner and a date.").font = SUB
 
 # ------------------------------------------------------------------ REFRESH CHECKLIST
-ws, r = sheet("09_Refresh_Checklist", "Refresh checklist and quality gates",
+ws, r = sheet("10_Refresh_Checklist", "Refresh checklist and quality gates",
               "Run this sequence at every refresh. If a gate fails, publication is blocked and the previous snapshot stays live.",
               widths=[8, 56, 22, 22, 40], tab="72B7B2")
 header(ws, r + 1, ["Step", "Activity", "Owner", "Evidence required", "If it fails"])
@@ -632,7 +665,7 @@ for step in steps:
     rr += 1
 
 # ------------------------------------------------------------------ COVERAGE
-ws, r = sheet("10_Coverage_Map", "Question coverage against the BRD and KPI dictionary",
+ws, r = sheet("11_Coverage_Map", "Question coverage against the BRD and KPI dictionary",
               "Every question traces to a KPI or functional requirement so that the dashboard build can be verified question by question.",
               widths=[10, 22, 56, 34, 30], tab="4C78A8")
 header(ws, r + 1, ["Stage", "Count", "Purpose at each refresh", "Where it is answered", "BRD reference"])
@@ -641,13 +674,16 @@ for stage, rows_, sheet_, purpose, ref in [
     ("Descriptive", len(Q.DESCRIPTIVE), "Establish the facts and populate the dashboard tiles", "02 + 06", "§12 KPI dictionary"),
     ("Diagnostic", len(Q.DIAGNOSTIC), "Test ranked causes behind each variance before acting", "03 + 08", "§14 business rules, §15 data quality"),
     ("Predictive", len(Q.PREDICTIVE), "Quantify what happens next if nothing changes", "04 + 08", "§11 pages 2–4, FR-18, FR-40"),
-    ("Prescriptive", len(Q.PRESCRIPTIVE), "Assign the action, the owner and the date", "05 + 09", "§8 to-be process, §21 benefits"),
+    ("Prescriptive", len(Q.PRESCRIPTIVE), "Assign the action, the owner and the date", "05 + 10", "§8 to-be process, §21 benefits"),
+    ("What-if", len(Q.WHATIF), "Quantify the effect of a driver moving, and choose a response",
+     "06 + VPT_WhatIf_Analysis.xlsx", "FR-49 to FR-53, §14.4 parameterisation"),
 ]:
     put(ws, rr, [stage, rows_, purpose, sheet_, ref], wrap_cols=(3, 5))
     rr += 1
 rr += 1
 ws.cell(row=rr, column=1, value="Total questions: " + str(len(Q.DESCRIPTIVE) + len(Q.DIAGNOSTIC) +
-                                                         len(Q.PREDICTIVE) + len(Q.PRESCRIPTIVE))).font = Font(
+                                                         len(Q.PREDICTIVE) + len(Q.PRESCRIPTIVE) +
+                                                         len(Q.WHATIF))).font = Font(
     name="Calibri", size=10, bold=True)
 rr += 2
 ws.cell(row=rr, column=1, value="Refresh-driven design").font = Font(name="Calibri", size=11, bold=True, color=NAVY)
@@ -655,7 +691,8 @@ rr += 1
 for line in [
     "The question text, purpose, data fields, logic and owner are stable — they are the standing analysis agenda.",
     "The answer, the status flag and the commentary text are recomputed from the data at each refresh and stamped with the as-at date.",
-    "Thresholds live in 01_Parameters so that a change of tolerance changes every status and commentary line consistently.",
+    "Thresholds and model assumptions live in config/parameters.json and are displayed in 01_Parameters, so a change of "
+    "tolerance or assumption changes every status, commentary line and scenario consistently.",
     "Where a question cannot yet be answered (for example a missing programme data field), it stays in the bank with a data-gap note rather than being removed.",
 ]:
     c = ws.cell(row=rr, column=1, value="•  " + line)

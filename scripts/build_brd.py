@@ -13,6 +13,10 @@ import json
 BASE = os.path.dirname(os.path.abspath(__file__))
 with open(os.path.join(BASE, "..", "data", "summary.json")) as f:
     S = json.load(f)
+with open(os.path.join(BASE, "..", "config", "parameters.json")) as f:
+    CFG = json.load(f)
+with open(os.path.join(BASE, "..", "data", "whatif_results.json")) as f:
+    WF = json.load(f)
 
 NAVY = RGBColor(0x1F, 0x3B, 0x57)
 GREY = RGBColor(0x59, 0x59, 0x59)
@@ -316,6 +320,7 @@ table(
         ["8", "Exception and data-quality panel with named owners for resolution.", "Must"],
         ["9", "Role-based security: project and donor users see only their own data.", "Must"],
         ["10", "Automated daily refresh from Oracle with visible data-freshness status.", "Must"],
+        ["11", "What-if and scenario modelling on configurable parameters, with sensitivity and break-even analysis.", "Should"],
     ],
     widths=[1.0, 13.8, 2.4], font=8.5, align_center_cols=(0, 2),
 )
@@ -682,6 +687,11 @@ frs = [
     ("FR-45", "Saved views and personalisation", "Allow users to save filter combinations as personal or shared views.", "Saved views are private by default and shareable on request; they do not alter underlying definitions.", "Could", "BR-11"),
     ("FR-46", "Mobile and responsive access", "Provide a responsive layout for tablet and mobile for the executive and project pages.", "Key visuals remain legible and usable at 768 px width; no horizontal scrolling of KPI tiles.", "Could", "BR-11"),
     ("FR-47", "Documentation and definitions access", "Make KPI definitions, calculation rules and the data dictionary available from within the dashboard.", "A definitions page is reachable from every view and matches the approved KPI dictionary version.", "Should", "BR-12"),
+    ("FR-49", "Configurable parameter register", "Hold every threshold and assumption in one governed register, displayed in the solution and changeable without code deployment.", "A change to a parameter is reflected in all affected statuses, commentary and scenarios at the next refresh, with no code change.", "Must", "BR-12"),
+    ("FR-50", "What-if scenario modelling", "Allow a named scenario to be defined as a set of parameter overrides and evaluated against the baseline.", "Each scenario shows consumption, purchase requirement, funding gap, utilisation, stock-out items, expiry risk and working capital, with the delta against the baseline.", "Should", "BR-04"),
+    ("FR-51", "Sensitivity analysis", "Rank the drivers by the size of their effect on a chosen output, moving one at a time between a low and a high value.", "A tornado view is produced for each output; the ranking is reproducible from the parameter register.", "Should", "BR-03"),
+    ("FR-52", "Break-even and trade-off analysis", "Solve for the value of a driver at which a condition changes (for example funding gap becomes zero), and show the cost of a policy choice across a range.", "Break-even values are stated with the search range; the stock-cover trade-off curve shows purchase cost, expiry risk and working capital by cover level.", "Should", "BR-04"),
+    ("FR-53", "Two-way scenario view", "Present an output across a grid of two drivers so that combinations can be read at a glance.", "Each cell equals a full model run for that combination; the current position is identifiable.", "Could", "BR-03"),
     ("FR-48", "Historical restatement control", "Preserve monthly snapshots so that previously reported figures can be reproduced after later data corrections.", "A closed period can be viewed as originally reported and as currently restated, with the difference shown.", "Should", "BR-08"),
 ]
 table(["ID", "Requirement", "Description", "Acceptance criteria", "Priority", "BR"],
@@ -956,6 +966,35 @@ table(
     widths=[1.6, 4.0, 11.6], font=8.3, align_center_cols=(0,),
 )
 
+doc.add_heading("14.4 Configurable parameters and what-if capability", level=2)
+para(
+    "The solution is specified to be configurable rather than hard-coded. Two groups of values are held in a single "
+    "governed register: status thresholds (which decide when a metric needs commentary or action) and model assumptions "
+    "(which drive every projection). The same register drives the dashboard statuses, the exception flags, the commentary "
+    "triggers and the scenario engine, so a change of tolerance or assumption cannot leave the pack inconsistent."
+)
+table(["Group", "Parameters held", "Why it is configurable", "Owner"],
+      [[g, ", ".join(m["name"] for m in CFG["model"] if m["group"] == g),
+        "Changes with policy, market or donor terms without a system change", "Business owner"]
+       for g in ["Demand", "Price", "Supply", "Policy", "Budget"]],
+      widths=[2.4, 8.4, 4.4, 2.0], font=8.0)
+para(
+    f"At the time of this version the register holds {len(CFG['model'])} model assumptions and {len(CFG['thresholds'])} "
+    f"thresholds. The scenario engine evaluates a baseline plus {len(CFG['scenarios']) - 1} defined scenarios, a "
+    "one-at-a-time sensitivity ranking, break-even solves and a two-way demand-by-price grid. A new scenario is added by "
+    "listing its parameter overrides in the register; no development work is required."
+)
+table(["Scenario", "Levers moved", "Business question it answers"],
+      [[sc["name"], ", ".join(sc["levers"].keys()) if sc["levers"] else "reference case", sc["rationale"]]
+       for sc in CFG["scenarios"]],
+      widths=[5.0, 5.0, 7.2], font=7.8)
+para(
+    "Governance: thresholds and assumptions are business decisions, not technical settings. Every change is recorded with "
+    "the previous value, the new value, the reason, the approver and the effective date, and applies from the next refresh "
+    "without amending historical snapshots. The register is reviewed twice a year and after any structural change "
+    "(new grant, new project, system change)."
+)
+
 # ============================================================ 15 DATA QUALITY
 doc.add_heading("15. Data Quality Requirements", level=1)
 para(
@@ -1016,6 +1055,8 @@ nfrs = [
     ("NFR-14", "Localisation", "English interface in this release; PKR currency with thousand separators; dates as dd-mmm-yyyy.", "UAT check"),
     ("NFR-15", "Backup and recovery", "Model and mart recoverable to the previous load within one working day.", "Recovery test"),
     ("NFR-16", "Portability", "Solution documented well enough to be rebuilt by another supplier.", "Handover pack accepted"),
+    ("NFR-17", "Configurability", "Every threshold, assumption and scenario is held in a single governed configuration file and can be changed without modifying code.", "Demonstrated parameter change with no code edit"),
+    ("NFR-18", "Reproducibility", "Any reported or projected figure can be reproduced from the configuration version and the data snapshot in force.", "Rebuild reproduces figures exactly"),
 ]
 table(["Ref", "Area", "Requirement", "Verification"], [[a, b, c, d] for a, b, c, d in nfrs],
       widths=[1.5, 3.0, 9.0, 3.7], font=8.3, align_center_cols=(0,))

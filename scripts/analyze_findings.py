@@ -420,9 +420,32 @@ F["seasonal_next_q"] = round(sum(monthly[k] * season_index[int(k[5:])] for k in 
 fy27_months = [k for k in months if fy_of(date(int(k[:4]), int(k[5:]), 1)) == "FY2026-27"]
 ytd = sum(monthly[k] for k in fy27_months)
 months_elapsed = len(fy27_months)
+
+# remaining months in the fiscal year during which at least one project is still active
+def any_active(y, m):
+    last = date(y, m, calendar.monthrange(y, m)[1])
+    return any(p[8] >= last and p[7] <= last for p in projects)
+
+remaining = 0
+yy, mm = ASAT.year, ASAT.month
+for _ in range(11):
+    mm += 1
+    if mm == 13:
+        yy, mm = yy + 1, 1
+    if fy_of(date(yy, mm, 1)) != "FY2026-27":
+        break
+    if any_active(yy, mm):
+        remaining += 1
+
+burn = ytd / months_elapsed
 F["fy2026_27"] = {"ytd": round(ytd, 2), "months": months_elapsed,
-                  "burn": round(ytd / months_elapsed, 2),
-                  "projection": round(ytd + (ytd / months_elapsed) * (12 - months_elapsed), 2)}
+                  "remaining_active_months": remaining,
+                  "burn": round(burn, 2),
+                  "projection": round(ytd + burn * remaining, 2)}
+
+# activity factor: share of the next 12 months in which consumption continues
+F["activity_factor"] = round((months_elapsed + remaining) / 12, 3)
+F["run_rate_12"] = round(burn * 12, 2)
 bud_fy27 = sum(b[3] for b in budgets if b[1] == "FY2026-27" and b[2] in PRODUCT_CATS)
 F["budget_fy27"] = round(bud_fy27, 2)
 F["fy27_proj_util"] = round(F["fy2026_27"]["projection"] / bud_fy27, 3) if bud_fy27 else None
@@ -440,6 +463,32 @@ for iid in under_90[:10]:
                 "onhand": round(onhand), "proposal": proposal,
                 "unit": itm[iid][4], "cost": round(proposal * itm[iid][6], 2)})
 F["requirement_proposal"] = req
+
+# ---------------------------------------------------------------- model baselines
+F["baseline"] = {
+    "run_rate_12": F["run_rate_12"],
+    "annual_budget": round(budget_product * 12 / len(months), 2),
+    "on_hand_value": round(onhand_val, 2),
+    "open_commitment": F["open_commitment"],
+    "annual_beneficiaries": round(benef_total / len(months) * 12),
+    "near_expiry_share": round((buckets["0-30"] + buckets["31-60"] + buckets["61-90"]) / onhand_val, 4),
+    "avg_lead_days": F.get("supplier", {}).get("avg_lead", 32),
+    "item_count": len(item_val),
+    "stockout_items": F["cover"]["under60"],
+}
+
+F["item_level"] = []
+annualise = 12 / len(months)
+for iid, val in sorted(item_val.items(), key=lambda x: -x[1]):
+    F["item_level"].append({
+        "id": iid, "name": itm[iid][1], "cat": itm[iid][2],
+        "annual_value": round(val * annualise, 2),
+        "annual_qty": round(item_qty[iid] * annualise),
+        "onhand_qty": round(onhand_item.get(iid, 0)),
+        "onhand_value": round(onhand_item.get(iid, 0) * itm[iid][6], 2),
+        "cover_days": round(cover[iid]) if iid in cover else None,
+        "std_cost": itm[iid][6],
+    })
 
 # ---------------------------------------------------------------- commentary seeds
 F["narrative"] = {

@@ -8,10 +8,12 @@ Single refresh command for the VPT consumption-analytics pack.
 Order of execution
   1. generate_dataset.py   – (optional) regenerate the Oracle-style sample extract
   2. analyze_findings.py   – recompute every metric into findings.json
-  3. build_analysis.py     – rebuild the analysis / dashboard workbook
-  4. build_qa_workbook.py  – rebuild the question bank, live answers and commentary feed
-  5. build_qa_doc.py       – rebuild the question bank and commentary guide
-  6. build_brd.py          – refresh the BRD's headline figures
+  3. whatif_model.py       – evaluate the scenarios in config/parameters.json (whatif_results.json)
+  4. build_analysis.py     – rebuild the analysis / dashboard workbook
+  5. build_whatif.py       – rebuild the what-if / scenario workbook
+  6. build_qa_workbook.py  – rebuild the question bank, live answers and commentary feed
+  7. build_qa_doc.py       – rebuild the question bank, commentary and what-if guide
+  8. build_brd.py          – refresh the BRD's headline figures
 
 Nothing in the answers or in the commentary is hard-coded: steps 2–6 derive
 everything from the dataset, so a refreshed extract changes every value,
@@ -44,7 +46,9 @@ def main():
         sys.exit(2)
 
     run("analyze_findings.py")
+    run("whatif_model.py")
     run("build_analysis.py")
+    run("build_whatif.py")
     run("build_qa_workbook.py")
     run("build_qa_doc.py")
     run("build_brd.py")
@@ -65,8 +69,15 @@ def main():
     print(f"Expired stock          PKR {F['stock']['expired_value']:>15,.0f}")
     print(f"Open commitment        PKR {F['open_commitment']:>15,.0f}")
     print(f"Issue lines            {S['issue_lines']:>19,}")
-    print("\nOutputs regenerated: analysis workbook, question bank workbook, guide, BRD.")
-    print("Next: review Red items in the question bank workbook (sheet 08), assign owners, "
+    with open(os.path.join(ROOT, "data", "whatif_results.json")) as f:
+        W = json.load(f)
+    b = W["baseline_result"]
+    print(f"\nWhat-if baseline     consumption PKR {b['consumption_value']:,.0f} | "
+          f"purchase PKR {b['purchase_value']:,.0f} | gap PKR {b['funding_gap']:,.0f}")
+    print(f"Scenarios evaluated  {len(W['scenarios'])} | levers {len(W['lever_spec'])}")
+    print("\nOutputs regenerated: analysis workbook, what-if workbook, question bank workbook, guide, BRD.")
+    print(f"Configuration        config/parameters.json v{W['config_version']}")
+    print("Next: review Red items in the question bank workbook (sheet 09), assign owners, "
           "and record the snapshot for restatement.")
 
 

@@ -16,6 +16,9 @@ import qa_content as Q
 BASE = os.path.dirname(os.path.abspath(__file__))
 with open(os.path.join(BASE, "..", "data", "findings.json")) as f:
     F = json.load(f)
+with open(os.path.join(BASE, "..", "data", "whatif_results.json")) as f:
+    W = json.load(f)
+CFG_MODEL = W["lever_spec"]
 
 NAVY = RGBColor(0x1F, 0x3B, 0x57)
 GREY = RGBColor(0x59, 0x59, 0x59)
@@ -238,6 +241,8 @@ for num, title in [
     ("11.", "Cadence, ownership and escalation"),
     ("12.", "Refresh governance and thresholds"),
     ("13.", "Data gaps and questions to add next"),
+    ("14.", "What-if and scenario analysis"),
+    ("15.", "Parameters, configuration and change control"),
 ]:
     p = doc.add_paragraph()
     p.paragraph_format.space_after = Pt(1)
@@ -678,6 +683,184 @@ for q in [
     "Which batches were received short-dated, and which suppliers delivered them?",
 ]:
     bullet(" " + q)
+
+# ============================================================ 14 WHAT-IF
+page_break()
+doc.add_heading("14. What-if and scenario analysis", level=1)
+WB = W["baseline_result"]
+para("Descriptive analysis tells us where we are; the what-if engine tells us what happens if a driver moves. Every lever "
+     "in the model is a parameter, so a scenario is a named set of parameter overrides rather than a separate spreadsheet. "
+     "The engine is documented in the workbook's Model_Logic sheet and reproduces in a few lines of arithmetic, which is "
+     "deliberate: a scenario that management cannot follow is a scenario management will not use.")
+doc.add_heading("14.1 How the model works", level=2)
+table(["Step", "Equation", "What it produces"], [
+    ["Consumption", "annualised run rate × (1 + demand growth) × price factor × activity factor",
+     "The forward 12-month value of products to be consumed"],
+    ["Price factor", "(1 + inflation) × (1 + one-off shock) × (1 − framework discount)", "The price effect, isolated from volume"],
+    ["Target stock", "consumption × (cover days + safety days) / 365", "The stock position that must be funded"],
+    ["Purchase requirement", "consumption + top-up − released excess stock + wastage replacement",
+     "The buying and cash requirement"],
+    ["Budget available", "annual budget × (1 − funding cut) × (1 + budget growth)", "The envelope the plan must fit inside"],
+    ["Funding gap", "max(0, consumption − budget available)", "The decision trigger"],
+    ["Expiry risk", "near-expiry share × stock + wastage × consumption + excess stock × (1 − redistribution)",
+     "Write-off exposure the policy creates"],
+    ["Stock-out risk", "items whose projected cover is below lead time + safety stock", "Service risk by item"],
+    ["Cost per beneficiary", "consumption ÷ beneficiaries", "Value for money"],
+], widths=[3.0, 8.0, 6.2], font=8.2)
+para(f"All parameters live in one configuration file (parameter set v{W['config_version']}). The baseline facts — run rate, "
+     f"stock, commitment, budget, beneficiaries, lead time — are recomputed from the data at every refresh; only the "
+     f"assumptions and the scenarios are entered by a person.", italic=True, size=8.5, color=GREY)
+
+doc.add_heading("14.2 The what-if question set", level=2)
+para("Fourteen standing what-if questions sit alongside the descriptive, diagnostic, predictive and prescriptive banks "
+     "(sheet 06 of the workbook). They are the questions management actually asks when a driver moves.")
+table(["ID", "What-if question", "Levers used", "Decision it supports", "Owner"],
+      [[r[0], r[1], r[3], r[2], r[8]] for r in Q.WHATIF],
+      widths=[1.3, 6.0, 3.6, 4.2, 2.1], font=7.6, align_center=(0,))
+
+doc.add_heading("14.3 Scenario results at this refresh", level=2)
+para(f"Forward 12 months, measured against the baseline. Data as at {W['as_at']}. These figures recalculate on refresh; "
+     f"the scenario definitions do not.")
+rows = []
+for sc in W["scenarios"]:
+    r = sc["result"]
+    rows.append([sc["id"], sc["name"], f"{r['consumption_value']/1e6:,.1f}", f"{r['purchase_value']/1e6:,.1f}",
+                 f"{r['funding_gap']/1e6:,.1f}", f"{r['budget_utilisation']:.1%}", str(r["stockout_items"]),
+                 f"{r['expiry_risk_value']/1e6:,.2f}", f"{r['working_capital']/1e6:,.1f}"])
+table(["ID", "Scenario", "Consumption (PKR m)", "Purchase (PKR m)", "Funding gap (PKR m)", "Utilisation",
+       "Stock-out items", "Expiry risk (PKR m)", "Working capital (PKR m)"],
+      rows, widths=[1.2, 5.4, 2.0, 1.9, 1.9, 1.6, 1.5, 1.8, 1.9], font=7.6,
+      align_center=(0, 2, 3, 4, 5, 6, 7, 8))
+caption("Baseline S0 is the current parameter set; it already carries the approved demand and price assumptions, which is "
+        "why it is not identical to the historic period totals in the analysis workbook.")
+doc.add_heading("14.4 Reading the scenarios", level=2)
+s7 = next(x for x in W["scenarios"] if x["id"] == "S7")["result"]
+s8 = next(x for x in W["scenarios"] if x["id"] == "S8")["result"]
+s5 = next(x for x in W["scenarios"] if x["id"] == "S5")["result"]
+s3 = next(x for x in W["scenarios"] if x["id"] == "S3")["result"]
+s6 = next(x for x in W["scenarios"] if x["id"] == "S6")["result"]
+bullet(f"Combined downside (S7) opens a funding gap of PKR {s7['funding_gap']/1e6:,.1f} million and pushes "
+       f"{s7['stockout_items']} items below the cover threshold. Applying the policy and commercial levers (S8) reduces the "
+       f"gap to PKR {s8['funding_gap']/1e6:,.1f} million — PKR {(s7['funding_gap']-s8['funding_gap'])/1e6:,.1f} million, or "
+       f"{(1-s8['funding_gap']/s7['funding_gap']):.0%} of the downside, is within management control.",
+       bold_lead="The value of acting. ")
+bullet(f"Moving from 90 to 60 days of cover (S5) releases PKR "
+       f"{(WB['working_capital']-s5['working_capital'])/1e6:,.1f} million of working capital and cuts the purchase "
+       f"requirement by PKR {(WB['purchase_value']-s5['purchase_value'])/1e6:,.1f} million, at a small change in expiry risk.",
+       bold_lead="The cheapest lever. ")
+bullet(f"A 60% lead-time increase with reliability falling to 70% (S3) barely moves the funding gap but takes stock-out items "
+       f"from {WB['stockout_items']} to {s3['stockout_items']}. Supply risk does not announce itself in the budget — it shows "
+       f"up at the service point.", bold_lead="The quiet risk. ")
+bullet(f"Framework contracting (S6) brings the baseline gap to zero, but it cannot absorb a demand or price shock on its own: "
+       f"it is a margin lever, not a capacity lever.", bold_lead="The limit of commercial action. ")
+
+doc.add_heading("14.5 Sensitivity – what to watch", level=2)
+order = W["sensitivity"]["order"]["funding_gap"]
+by_key = {r["key"]: r for r in W["sensitivity"]["rows"]}
+para("One lever at a time, moved between a low and a high value, ranked by the effect on the funding gap. Monitoring effort "
+     "should follow this ranking.")
+table(["Rank", "Lever", "Low → high", "Funding gap at low (PKR m)", "at high (PKR m)", "Swing (PKR m)"],
+      [[str(i), key, f"{by_key[key]['low']} → {by_key[key]['high']}",
+        f"{by_key[key]['outputs']['funding_gap']['low']/1e6:,.1f}",
+        f"{by_key[key]['outputs']['funding_gap']['high']/1e6:,.1f}",
+        f"{by_key[key]['outputs']['funding_gap']['swing']/1e6:,.1f}"]
+       for i, key in enumerate(order, start=1)],
+      widths=[1.3, 5.0, 3.0, 2.8, 2.6, 2.5], font=8.0, align_center=(0, 2, 3, 4, 5))
+sw = by_key[order[0]]["outputs"]["stockout_items"]["swing"]
+sw_key = order[0]
+lead_row = by_key["lead_time_multiplier"]
+para(f"On the funding gap, {sw_key} dominates. On stock-out risk the ranking is different: lead time and supplier "
+     f"reliability move {lead_row['outputs']['stockout_items']['swing']} items between the low and high case — the largest "
+     f"swing on that output. Two different risks, two different monitoring measures.")
+
+doc.add_heading("14.6 Break-even and the cover trade-off", level=2)
+para("Break-even converts the budget position into a tolerance that can be watched, and the cover curve shows the cost of "
+     "protection.")
+be_rows = []
+for b in W["breakeven"]:
+    val = b["breakeven"]
+    if isinstance(val, float) and b["key"].endswith("_pct"):
+        shown = f"{val:.1%}"
+    elif val is None:
+        shown = "n/a"
+    else:
+        shown = f"{val:,.2f}"
+    be_rows.append([b["key"], b["target"], shown, b["note"]])
+table(["Lever", "Condition solved", "Break-even value", "Note"], be_rows,
+      widths=[3.8, 3.4, 2.6, 7.4], font=8.2)
+
+curve = next((b.get("curve") for b in W["breakeven"] if b.get("curve")), [])
+if curve:
+    picks = [curve[0], curve[5], curve[10], curve[15], curve[20], curve[-1]]
+    table(["Cover policy (days)", "Purchase requirement (PKR m)", "Expiry risk (PKR m)",
+           "Working capital (PKR m)", "Stock-out items"],
+          [[f"{p['x']:.0f}", f"{p['purchase']/1e6:,.1f}", f"{p['expiry']/1e6:,.2f}",
+            f"{p['capital']/1e6:,.1f}", str(p["stockouts"])] for p in picks],
+          widths=[3.4, 4.0, 3.4, 3.4, 3.0], font=8.2, align_center=(0, 1, 2, 3, 4))
+    para("The curve is flat on the left and rises on the right: below roughly 90 days each additional day of cover buys "
+         "protection cheaply; above it, the purchase requirement and working capital rise faster than the risk falls. That "
+         "knee is the defensible policy point, and it should be reviewed twice a year.", italic=True, size=8.5, color=GREY)
+
+doc.add_heading("14.7 Two-way view – demand growth × price inflation", level=2)
+para("A single break-even point is easy to read; a map is easier to plan with. Rows are demand growth, columns are price "
+     "inflation, and each cell is a full model run showing the funding gap in PKR millions.")
+tw = W["twoway"]
+header_cells = [f"{c:.0%}"] + [f"{v/1e6:,.1f}" for v in tw["tables"]["funding_gap"][0]] if False else None
+grid = []
+for i, rv in enumerate(tw["row_values"]):
+    grid.append([f"{rv:.0%}"] + [f"{v/1e6:,.1f}" for v in tw["tables"]["funding_gap"][i]])
+table(["Demand ↓ / Price →"] + [f"{c:.0%}" for c in tw["col_values"]], grid,
+      widths=[3.2] + [2.3] * len(tw["col_values"]), font=8.2, align_center=tuple(range(0, 7)))
+para("Read across a row to see the price effect and down a column to see the demand effect; the current position sits near "
+     "the middle of the grid. Anything in the lower-right quadrant is beyond what commercial action alone can absorb.",
+     italic=True, size=8.5, color=GREY)
+
+# ============================================================ 15 PARAMETERS
+page_break()
+doc.add_heading("15. Parameters, configuration and change control", level=1)
+para(f"Nothing in this pack is hard-coded. All {len(Q.PARAMETERS)} thresholds and all {len(Q.MODEL_PARAMETERS)} model "
+     f"assumptions are held in a single configuration file, parameter set v{Q.CONFIG_VERSION}. The workbooks, this guide and "
+     f"the BRD figures are generated from that file plus the data, so a change is made once and takes effect everywhere.")
+doc.add_heading("15.1 Parameters by group", level=2)
+groups = {}
+for key, name, val, unit, rng, basis, owner in Q.MODEL_PARAMETERS:
+    g = next((m["group"] for m in CFG_MODEL if m["key"] == key), "Other")
+    if isinstance(val, (int, float)) and unit == "%":
+        shown = f"{val:.2%}"
+    elif isinstance(val, (int, float)):
+        shown = f"{val:g}"
+    else:
+        shown = str(val)
+    groups.setdefault(g, []).append([key, name, shown, unit, rng, owner])
+for g, rows in groups.items():
+    doc.add_heading(f"{g}", level=3)
+    table(["Key", "Parameter", "Value", "Unit", "Working range", "Owner"], rows,
+          widths=[4.0, 5.6, 1.8, 1.4, 2.4, 2.0], font=8.0, align_center=(2, 3))
+doc.add_heading("15.2 Thresholds", level=2)
+table(["Ref", "Threshold", "Value", "Unit", "How it is used"],
+      [[p[0], p[1], p[2], p[3], p[4]] for p in Q.PARAMETERS],
+      widths=[1.2, 5.2, 2.6, 1.6, 6.6], font=7.8, align_center=(0, 2, 3))
+doc.add_heading("15.3 Change control", level=2)
+table(["Change", "Approval", "Effect", "Recorded where"], [
+    ["Threshold (status band)", "Business owner", "All status flags and commentary lines from the next refresh",
+     "Configuration history with old value, new value, reason, date"],
+    ["Model assumption", "Business owner with Finance", "Every what-if output and scenario", "Same, plus a note in the quarterly review minutes"],
+    ["New or edited scenario", "Business analyst, noted to the owner", "Scenario summary, sensitivity and documents",
+     "Configuration file, with an identifier and a rationale"],
+    ["New question", "Business owner", "Question bank and coverage map", "Question bank with a BRD reference"],
+    ["KPI definition change", "Steering group", "Every reported figure, and comparability with history",
+     "BRD change control log"],
+], widths=[3.6, 3.4, 6.4, 3.8], font=8.1)
+doc.add_heading("15.4 Rules for changing a parameter", level=2)
+for t in [
+    "Change the value in the configuration file, never in a report or a workbook cell.",
+    "Record the old value, the new value, the reason, the approver and the effective date before the next refresh.",
+    "Re-run the full refresh so that every artefact is rebuilt from the same numbers; do not hand-edit outputs.",
+    "A parameter change applies from the next refresh forward. Historical snapshots keep the parameters they were built with.",
+    "Re-read the affected commentary: a threshold change can close open actions or open new ones, and both need a decision.",
+    "Review the whole set twice a year, and after any structural change such as a new grant, a new project or a system change.",
+]:
+    bullet(" " + t)
 
 doc.add_paragraph()
 para("— End of document —", align=WD_ALIGN_PARAGRAPH.CENTER, italic=True, size=8.5, color=GREY)
