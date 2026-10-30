@@ -1,0 +1,23 @@
+{
+  "start": "2024-07-01",
+  "end": "2026-09-30",
+  "as_at": "2026-09-30",
+  "months": 27,
+  "consumption_all": 279053700.44,
+  "consumption_billable": 261575946.1,
+  "purchase_value": 300845059.6,
+  "budget_total": 486166000.0,
+  "budget_product": 342237000.0,
+  "unattributed_value": 6730947.78,
+  "unattributed_pct": 2.57,
+  "beneficiaries": 679751,
+  "po_lines": 14103,
+  "grn_lines": 16746,
+  "issue_lines": 23169,
+  "shortfalls": 70,
+  "open_commitment": 4467950.63,
+  "open_commitment_lines": 320,
+  "projects": 10,
+  "items": 87,
+  "suppliers": 12
+}

@@ -1,0 +1,522 @@
+{
+  "version": "1.1",
+  "owner": "Head of Procurement & Supply Chain",
+  "last_reviewed": "2026-10-29",
+  "notes": "Single source of truth for every threshold, assumption and scenario in the consumption analytics pack. Changing a value here and re-running scripts/refresh_all.py changes every status flag, commentary line and what-if result. Values marked auto are derived from the data at refresh time.",
+  "thresholds": [
+    {
+      "id": "P-01",
+      "name": "Data as at (report date)",
+      "value": "auto",
+      "unit": "Date",
+      "use": "Later of last successful load and last closed period; shown on every page and stamped on every answer"
+    },
+    {
+      "id": "P-02",
+      "name": "Consumption-to-investment ratio band",
+      "value": "0.80-1.05",
+      "low": 0.8,
+      "high": 1.05,
+      "unit": "Ratio",
+      "use": "Below 0.80 = over-purchasing; above 1.05 = drawing down opening stock"
+    },
+    {
+      "id": "P-03",
+      "name": "Consumption variance vs budget - investigate above",
+      "value": 0.15,
+      "unit": "%",
+      "use": "Beyond this band the variance requires written commentary and an owner"
+    },
+    {
+      "id": "P-04",
+      "name": "Materiality for mandatory commentary",
+      "value": 250000,
+      "unit": "PKR",
+      "use": "PKR 250,000 or 10% of the category budget, whichever is lower"
+    },
+    {
+      "id": "P-05",
+      "name": "Days of cover - critical threshold",
+      "value": 30,
+      "unit": "Days",
+      "use": "Raise a purchase requisition or transfer immediately"
+    },
+    {
+      "id": "P-06",
+      "name": "Days of cover - watch threshold",
+      "value": 60,
+      "unit": "Days",
+      "use": "Include in the next monthly purchase plan"
+    },
+    {
+      "id": "P-07",
+      "name": "Days of cover - overstock threshold",
+      "value": 180,
+      "unit": "Days",
+      "use": "Freeze re-ordering and review redistribution"
+    },
+    {
+      "id": "P-08",
+      "name": "Expiry alert window",
+      "value": 60,
+      "unit": "Days",
+      "use": "Redistribute, consume first, or write off before expiry"
+    },
+    {
+      "id": "P-09",
+      "name": "Price variance - investigate above",
+      "value": 0.1,
+      "unit": "%",
+      "use": "Compare supplier quotes and check contract validity"
+    },
+    {
+      "id": "P-10",
+      "name": "Unattributed consumption ceiling",
+      "value": 0.01,
+      "unit": "%",
+      "use": "Above this, escalate to the project-coding owner"
+    },
+    {
+      "id": "P-11",
+      "name": "Exception ageing before escalation",
+      "value": 30,
+      "unit": "Days",
+      "use": "Escalate to the Head of Procurement"
+    },
+    {
+      "id": "P-12",
+      "name": "Slow-moving lookback",
+      "value": 6,
+      "unit": "Months",
+      "use": "Zero issues in the lookback with stock on hand = slow-moving"
+    },
+    {
+      "id": "P-13",
+      "name": "Requirement-proposal cover target",
+      "value": 90,
+      "unit": "Days",
+      "use": "Basis of the indicative purchase quantity (BRD FR-40)"
+    },
+    {
+      "id": "P-14",
+      "name": "Stock-out tolerance",
+      "value": 0,
+      "unit": "Items",
+      "use": "Any critical item below 15 days of cover is a service risk"
+    },
+    {
+      "id": "P-15",
+      "name": "Budget utilisation expectation",
+      "value": "elapsed+/-15%",
+      "unit": "%",
+      "use": "Under or over this band requires explanation"
+    }
+  ],
+  "model": [
+    {
+      "key": "demand_growth_pct",
+      "name": "Demand growth (annual)",
+      "value": 0.05,
+      "unit": "%",
+      "min": -0.3,
+      "max": 0.5,
+      "group": "Demand",
+      "basis": "Programme growth trend over the reporting window",
+      "owner": "Programme",
+      "governs": "Consumption value, purchase requirement, funding gap, cost per beneficiary"
+    },
+    {
+      "key": "service_volume_growth_pct",
+      "name": "Service volume (beneficiary) growth",
+      "value": 0.04,
+      "unit": "%",
+      "min": -0.3,
+      "max": 0.5,
+      "group": "Demand",
+      "basis": "Beneficiary trend in the service-delivery data",
+      "owner": "Programme",
+      "governs": "Cost per beneficiary"
+    },
+    {
+      "key": "activity_factor",
+      "name": "Project activity factor (next 12 months)",
+      "value": "auto",
+      "unit": "Ratio",
+      "min": 0.1,
+      "max": 1.0,
+      "group": "Demand",
+      "basis": "Share of the next 12 months in which at least one project is active (from project end dates)",
+      "owner": "Programme",
+      "governs": "All annualised projections"
+    },
+    {
+      "key": "price_inflation_pct",
+      "name": "Price inflation (annual)",
+      "value": 0.09,
+      "unit": "%",
+      "min": -0.1,
+      "max": 0.4,
+      "group": "Price",
+      "basis": "Weighted average unit-price movement in the purchase history",
+      "owner": "Procurement",
+      "governs": "Consumption value, purchase value, funding gap, price variance"
+    },
+    {
+      "key": "price_shock_pct",
+      "name": "One-off price shock",
+      "value": 0.0,
+      "unit": "%",
+      "min": -0.2,
+      "max": 0.5,
+      "group": "Price",
+      "basis": "Scenario lever for a market, currency or contract event",
+      "owner": "Procurement",
+      "governs": "Consumption value, purchase value, funding gap"
+    },
+    {
+      "key": "bulk_discount_pct",
+      "name": "Bulk / framework discount",
+      "value": 0.0,
+      "unit": "%",
+      "min": 0.0,
+      "max": 0.25,
+      "group": "Price",
+      "basis": "Negotiated discount on consolidated demand",
+      "owner": "Procurement",
+      "governs": "Purchase value, ratio"
+    },
+    {
+      "key": "lead_time_multiplier",
+      "name": "Supplier lead-time multiplier",
+      "value": 1.0,
+      "unit": "x",
+      "min": 0.5,
+      "max": 3.0,
+      "group": "Supply",
+      "basis": "1.00 = current average lead time of the supplier base",
+      "owner": "Procurement",
+      "governs": "Stock-out risk, safety stock, target stock, purchase requirement"
+    },
+    {
+      "key": "supplier_reliability_pct",
+      "name": "Supplier on-time reliability",
+      "value": 0.9,
+      "unit": "%",
+      "min": 0.4,
+      "max": 1.0,
+      "group": "Supply",
+      "basis": "Share of orders received within the agreed lead time",
+      "owner": "Procurement",
+      "governs": "Safety stock, stock-out risk"
+    },
+    {
+      "key": "target_cover_days",
+      "name": "Target stock cover",
+      "value": 90,
+      "unit": "Days",
+      "min": 15,
+      "max": 240,
+      "group": "Policy",
+      "basis": "Policy: cover to hold after each purchase cycle",
+      "owner": "Head of Procurement",
+      "governs": "Target stock level, purchase requirement, working capital, expiry risk"
+    },
+    {
+      "key": "safety_stock_days",
+      "name": "Safety stock",
+      "value": 15,
+      "unit": "Days",
+      "min": 0,
+      "max": 90,
+      "group": "Policy",
+      "basis": "Buffer against lead-time and demand variability",
+      "owner": "Head of Procurement",
+      "governs": "Target stock level, stock-out risk"
+    },
+    {
+      "key": "max_cover_days",
+      "name": "Maximum acceptable cover",
+      "value": 180,
+      "unit": "Days",
+      "min": 60,
+      "max": 365,
+      "group": "Policy",
+      "basis": "Above this, stock counts as overstocked",
+      "owner": "Supply chain",
+      "governs": "Overstock value, expiry risk"
+    },
+    {
+      "key": "expiry_alert_days",
+      "name": "Expiry alert window",
+      "value": 60,
+      "unit": "Days",
+      "min": 15,
+      "max": 180,
+      "group": "Policy",
+      "basis": "Alert before expiry for redistribution or consumption",
+      "owner": "Stores",
+      "governs": "Expiry risk value, disposition actions"
+    },
+    {
+      "key": "wastage_rate_pct",
+      "name": "Wastage / write-off rate",
+      "value": 0.015,
+      "unit": "%",
+      "min": 0.0,
+      "max": 0.1,
+      "group": "Policy",
+      "basis": "Observed expired and damaged stock as a share of consumption",
+      "owner": "Stores",
+      "governs": "Expiry risk value, purchase requirement"
+    },
+    {
+      "key": "redistribution_share_pct",
+      "name": "Overstock redistributed",
+      "value": 0.0,
+      "unit": "%",
+      "min": 0.0,
+      "max": 1.0,
+      "group": "Policy",
+      "basis": "Share of excess stock moved to a project with demand instead of being written off",
+      "owner": "Supply chain",
+      "governs": "Expiry risk value, purchase requirement"
+    },
+    {
+      "key": "funding_cut_pct",
+      "name": "Funding reduction",
+      "value": 0.0,
+      "unit": "%",
+      "min": 0.0,
+      "max": 0.6,
+      "group": "Budget",
+      "basis": "Scenario lever for a grant reduction or donor hold",
+      "owner": "Finance & Grants",
+      "governs": "Budget available, funding gap, budget utilisation"
+    },
+    {
+      "key": "budget_growth_pct",
+      "name": "Budget growth / reallocation",
+      "value": 0.0,
+      "unit": "%",
+      "min": -0.3,
+      "max": 0.5,
+      "group": "Budget",
+      "basis": "Approved additional budget or internal reallocation",
+      "owner": "Finance & Grants",
+      "governs": "Budget available, funding gap, budget utilisation"
+    },
+    {
+      "key": "excess_stock_release_pct",
+      "name": "Excess stock used instead of buying",
+      "value": 0.8,
+      "unit": "%",
+      "min": 0.0,
+      "max": 1.0,
+      "group": "Policy",
+      "basis": "Share of stock held above the target cover that offsets new purchases (redistribution or planned drawdown)",
+      "owner": "Supply chain",
+      "governs": "Purchase requirement, working capital, funding gap"
+    },
+    {
+      "key": "order_cycle_days",
+      "name": "Purchase cycle length",
+      "value": 30,
+      "unit": "Days",
+      "min": 7,
+      "max": 120,
+      "group": "Supply",
+      "basis": "Days between requisition cycles",
+      "owner": "Procurement",
+      "governs": "Number of purchase cycles, order frequency, transaction load"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "S0",
+      "name": "Baseline (current parameters)",
+      "levers": {},
+      "rationale": "Reference case: current demand, price, supply and policy. Every other scenario is measured against this."
+    },
+    {
+      "id": "S1",
+      "name": "Demand surge +20%",
+      "levers": {
+        "demand_growth_pct": 0.2
+      },
+      "rationale": "Outbreak, flood response or a new campaign in the service area."
+    },
+    {
+      "id": "S2",
+      "name": "Price shock +15%",
+      "levers": {
+        "price_inflation_pct": 0.09,
+        "price_shock_pct": 0.15
+      },
+      "rationale": "Currency depreciation, loss of a contract price or a supplier exit."
+    },
+    {
+      "id": "S3",
+      "name": "Supply disruption (lead time x1.6, reliability 70%)",
+      "levers": {
+        "lead_time_multiplier": 1.6,
+        "supplier_reliability_pct": 0.7
+      },
+      "rationale": "Import delay, port congestion or a single-source supplier failing."
+    },
+    {
+      "id": "S4",
+      "name": "Funding cut -20%",
+      "levers": {
+        "funding_cut_pct": 0.2
+      },
+      "rationale": "Donor reduction or a hold on a grant instalment."
+    },
+    {
+      "id": "S5",
+      "name": "Optimised policy (cover 60, safety 10, redistribute 60%)",
+      "levers": {
+        "target_cover_days": 60,
+        "safety_stock_days": 10,
+        "redistribution_share_pct": 0.6,
+        "lead_time_multiplier": 1.0,
+        "excess_stock_release_pct": 0.9
+      },
+      "rationale": "Tighter cover policy plus redistribution instead of new buying."
+    },
+    {
+      "id": "S6",
+      "name": "Framework contracting (-8% price, lead time x0.8)",
+      "levers": {
+        "bulk_discount_pct": 0.08,
+        "lead_time_multiplier": 0.8,
+        "supplier_reliability_pct": 0.95
+      },
+      "rationale": "Consolidate the top items into a framework agreement."
+    },
+    {
+      "id": "S7",
+      "name": "Combined downside (demand +15%, price +10%, lead time x1.4, funding -10%)",
+      "levers": {
+        "demand_growth_pct": 0.15,
+        "price_shock_pct": 0.1,
+        "lead_time_multiplier": 1.4,
+        "supplier_reliability_pct": 0.75,
+        "funding_cut_pct": 0.1
+      },
+      "rationale": "The plausible worst case: surge demand plus inflation plus supply delay plus a funding hold."
+    },
+    {
+      "id": "S8",
+      "name": "Optimised response to the downside (S7 + policy and framework levers)",
+      "levers": {
+        "demand_growth_pct": 0.15,
+        "price_shock_pct": 0.1,
+        "lead_time_multiplier": 1.2,
+        "supplier_reliability_pct": 0.85,
+        "funding_cut_pct": 0.1,
+        "target_cover_days": 60,
+        "safety_stock_days": 10,
+        "redistribution_share_pct": 0.6,
+        "bulk_discount_pct": 0.08
+      },
+      "rationale": "Shows how much of the downside can be absorbed by levers available to management."
+    }
+  ],
+  "sensitivity": {
+    "outputs": [
+      "purchase_value",
+      "funding_gap",
+      "expiry_risk_value",
+      "stockout_items"
+    ],
+    "levers": [
+      {
+        "key": "demand_growth_pct",
+        "low": 0.0,
+        "high": 0.25
+      },
+      {
+        "key": "price_inflation_pct",
+        "low": 0.03,
+        "high": 0.18
+      },
+      {
+        "key": "lead_time_multiplier",
+        "low": 0.8,
+        "high": 1.8
+      },
+      {
+        "key": "target_cover_days",
+        "low": 45,
+        "high": 120
+      },
+      {
+        "key": "funding_cut_pct",
+        "low": 0.0,
+        "high": 0.25
+      },
+      {
+        "key": "wastage_rate_pct",
+        "low": 0.005,
+        "high": 0.04
+      },
+      {
+        "key": "redistribution_share_pct",
+        "low": 0.0,
+        "high": 0.8
+      }
+    ]
+  },
+  "breakeven": {
+    "solves": [
+      {
+        "key": "price_inflation_pct",
+        "target": "funding_gap == 0",
+        "min": 0.0,
+        "max": 1.0
+      },
+      {
+        "key": "demand_growth_pct",
+        "target": "funding_gap == 0",
+        "min": -0.5,
+        "max": 1.5
+      },
+      {
+        "key": "funding_cut_pct",
+        "target": "funding_gap == 0",
+        "min": 0.0,
+        "max": 0.9
+      },
+      {
+        "key": "target_cover_days",
+        "target": "curve",
+        "min": 30,
+        "max": 210
+      }
+    ]
+  },
+  "twoway": {
+    "row_key": "demand_growth_pct",
+    "row_values": [
+      -0.2,
+      -0.1,
+      0.0,
+      0.1,
+      0.2,
+      0.3
+    ],
+    "col_key": "price_inflation_pct",
+    "col_values": [
+      0.0,
+      0.05,
+      0.09,
+      0.15,
+      0.2,
+      0.25
+    ],
+    "outputs": [
+      "funding_gap",
+      "budget_utilisation"
+    ]
+  }
+}

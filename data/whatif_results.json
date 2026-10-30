@@ -1,0 +1,1740 @@
+{
+  "config_version": "1.1",
+  "as_at": "2026-09-30",
+  "baseline_params": {
+    "demand_growth_pct": 0.05,
+    "service_volume_growth_pct": 0.04,
+    "activity_factor": 1.0,
+    "price_inflation_pct": 0.09,
+    "price_shock_pct": 0.0,
+    "bulk_discount_pct": 0.0,
+    "lead_time_multiplier": 1.0,
+    "supplier_reliability_pct": 0.9,
+    "target_cover_days": 90,
+    "safety_stock_days": 15,
+    "max_cover_days": 180,
+    "expiry_alert_days": 60,
+    "wastage_rate_pct": 0.015,
+    "redistribution_share_pct": 0.0,
+    "funding_cut_pct": 0.0,
+    "budget_growth_pct": 0.0,
+    "excess_stock_release_pct": 0.8,
+    "order_cycle_days": 30
+  },
+  "baseline_facts": {
+    "run_rate_12": 135073507.52,
+    "annual_budget": 152105333.33,
+    "on_hand_value": 41090443.94,
+    "open_commitment": 4467950.63,
+    "annual_beneficiaries": 302112,
+    "near_expiry_share": 0.0386,
+    "avg_lead_days": 32,
+    "item_count": 83,
+    "stockout_items": 3,
+    "activity_factor": 1.0
+  },
+  "baseline_result": {
+    "consumption_value": 154591629.36,
+    "purchase_value": 157178997.71,
+    "top_up": 268493.91,
+    "excess_stock_released": 0.0,
+    "wastage_replacement": 2318874.44,
+    "target_stock_value": 45826888.48,
+    "available_stock": 45558394.57,
+    "ratio": 0.984,
+    "budget_available": 152105333.33,
+    "budget_utilisation": 1.016,
+    "funding_gap": 2486296.03,
+    "expiry_risk_value": 3944941.69,
+    "overstock_value": 114217.46,
+    "overstock_items": 3,
+    "stockout_items": 2,
+    "working_capital": 45826888.48,
+    "beneficiaries": 314196,
+    "cost_per_beneficiary": 492.02,
+    "lead_time_days": 32.0,
+    "safety_days": 18.2,
+    "demand_factor": 1.05,
+    "price_factor": 1.09,
+    "risk_items": [
+      {
+        "id": "NUT-0003",
+        "name": "F-100 Therapeutic Milk 400 g",
+        "cover": 30.476190476190474
+      },
+      {
+        "id": "MED-0024",
+        "name": "Artemether + Lumefantrine 20/120 mg",
+        "cover": 43.80952380952381
+      }
+    ]
+  },
+  "scenarios": [
+    {
+      "id": "S0",
+      "name": "Baseline (current parameters)",
+      "rationale": "Reference case: current demand, price, supply and policy. Every other scenario is measured against this.",
+      "levers": {},
+      "changed": {},
+      "result": {
+        "consumption_value": 154591629.36,
+        "purchase_value": 157178997.71,
+        "top_up": 268493.91,
+        "excess_stock_released": 0.0,
+        "wastage_replacement": 2318874.44,
+        "target_stock_value": 45826888.48,
+        "available_stock": 45558394.57,
+        "ratio": 0.984,
+        "budget_available": 152105333.33,
+        "budget_utilisation": 1.016,
+        "funding_gap": 2486296.03,
+        "expiry_risk_value": 3944941.69,
+        "overstock_value": 114217.46,
+        "overstock_items": 3,
+        "stockout_items": 2,
+        "working_capital": 45826888.48,
+        "beneficiaries": 314196,
+        "cost_per_beneficiary": 492.02,
+        "lead_time_days": 32.0,
+        "safety_days": 18.2,
+        "demand_factor": 1.05,
+        "price_factor": 1.09,
+        "risk_items": [
+          {
+            "id": "NUT-0003",
+            "name": "F-100 Therapeutic Milk 400 g",
+            "cover": 30.476190476190474
+          },
+          {
+            "id": "MED-0024",
+            "name": "Artemether + Lumefantrine 20/120 mg",
+            "cover": 43.80952380952381
+          }
+        ]
+      },
+      "delta": {
+        "consumption_value": 0.0,
+        "purchase_value": 0.0,
+        "funding_gap": 0.0,
+        "expiry_risk_value": 0.0,
+        "stockout_items": 0,
+        "working_capital": 0.0,
+        "cost_per_beneficiary": 0.0,
+        "overstock_value": 0.0
+      }
+    },
+    {
+      "id": "S1",
+      "name": "Demand surge +20%",
+      "rationale": "Outbreak, flood response or a new campaign in the service area.",
+      "levers": {
+        "demand_growth_pct": 0.2
+      },
+      "changed": {
+        "demand_growth_pct": {
+          "baseline": 0.05,
+          "scenario": 0.2
+        }
+      },
+      "result": {
+        "consumption_value": 176676147.84,
+        "purchase_value": 186141482.32,
+        "top_up": 6815192.27,
+        "excess_stock_released": 0.0,
+        "wastage_replacement": 2650142.22,
+        "target_stock_value": 52373586.84,
+        "available_stock": 45558394.57,
+        "ratio": 0.949,
+        "budget_available": 152105333.33,
+        "budget_utilisation": 1.162,
+        "funding_gap": 24570814.51,
+        "expiry_risk_value": 4249735.75,
+        "overstock_value": 38578.29,
+        "overstock_items": 1,
+        "stockout_items": 3,
+        "working_capital": 52373586.84,
+        "beneficiaries": 314196,
+        "cost_per_beneficiary": 562.31,
+        "lead_time_days": 32.0,
+        "safety_days": 18.2,
+        "demand_factor": 1.2,
+        "price_factor": 1.09,
+        "risk_items": [
+          {
+            "id": "NUT-0003",
+            "name": "F-100 Therapeutic Milk 400 g",
+            "cover": 26.666666666666668
+          },
+          {
+            "id": "MED-0024",
+            "name": "Artemether + Lumefantrine 20/120 mg",
+            "cover": 38.333333333333336
+          },
+          {
+            "id": "MED-0023",
+            "name": "Mebendazole 100 mg Tablet",
+            "cover": 45.833333333333336
+          }
+        ]
+      },
+      "delta": {
+        "consumption_value": 22084518.48,
+        "purchase_value": 28962484.61,
+        "funding_gap": 22084518.48,
+        "expiry_risk_value": 304794.06,
+        "stockout_items": 1,
+        "working_capital": 6546698.36,
+        "cost_per_beneficiary": 70.29,
+        "overstock_value": -75639.17
+      }
+    },
+    {
+      "id": "S2",
+      "name": "Price shock +15%",
+      "rationale": "Currency depreciation, loss of a contract price or a supplier exit.",
+      "levers": {
+        "price_inflation_pct": 0.09,
+        "price_shock_pct": 0.15
+      },
+      "changed": {
+        "price_shock_pct": {
+          "baseline": 0.0,
+          "scenario": 0.15
+        }
+      },
+      "result": {
+        "consumption_value": 177780373.76,
+        "purchase_value": 187589606.55,
+        "top_up": 7142527.19,
+        "excess_stock_released": 0.0,
+        "wastage_replacement": 2666705.61,
+        "target_stock_value": 52700921.76,
+        "available_stock": 45558394.57,
+        "ratio": 0.948,
+        "budget_available": 152105333.33,
+        "budget_utilisation": 1.169,
+        "funding_gap": 25675040.43,
+        "expiry_risk_value": 4292772.85,
+        "overstock_value": 114217.46,
+        "overstock_items": 3,
+        "stockout_items": 2,
+        "working_capital": 52700921.76,
+        "beneficiaries": 314196,
+        "cost_per_beneficiary": 565.83,
+        "lead_time_days": 32.0,
+        "safety_days": 18.2,
+        "demand_factor": 1.05,
+        "price_factor": 1.254,
+        "risk_items": [
+          {
+            "id": "NUT-0003",
+            "name": "F-100 Therapeutic Milk 400 g",
+            "cover": 30.476190476190474
+          },
+          {
+            "id": "MED-0024",
+            "name": "Artemether + Lumefantrine 20/120 mg",
+            "cover": 43.80952380952381
+          }
+        ]
+      },
+      "delta": {
+        "consumption_value": 23188744.4,
+        "purchase_value": 30410608.84,
+        "funding_gap": 23188744.4,
+        "expiry_risk_value": 347831.16,
+        "stockout_items": 0,
+        "working_capital": 6874033.28,
+        "cost_per_beneficiary": 73.81,
+        "overstock_value": 0.0
+      }
+    },
+    {
+      "id": "S3",
+      "name": "Supply disruption (lead time x1.6, reliability 70%)",
+      "rationale": "Import delay, port congestion or a single-source supplier failing.",
+      "levers": {
+        "lead_time_multiplier": 1.6,
+        "supplier_reliability_pct": 0.7
+      },
+      "changed": {
+        "lead_time_multiplier": {
+          "baseline": 1.0,
+          "scenario": 1.6
+        },
+        "supplier_reliability_pct": {
+          "baseline": 0.9,
+          "scenario": 0.7
+        }
+      },
+      "result": {
+        "consumption_value": 154591629.36,
+        "purchase_value": 162329228.43,
+        "top_up": 5418724.63,
+        "excess_stock_released": 0.0,
+        "wastage_replacement": 2318874.44,
+        "target_stock_value": 50977119.2,
+        "available_stock": 45558394.57,
+        "ratio": 0.952,
+        "budget_available": 152105333.33,
+        "budget_utilisation": 1.016,
+        "funding_gap": 2486296.03,
+        "expiry_risk_value": 3944941.69,
+        "overstock_value": 114217.46,
+        "overstock_items": 3,
+        "stockout_items": 18,
+        "working_capital": 50977119.2,
+        "beneficiaries": 314196,
+        "cost_per_beneficiary": 492.02,
+        "lead_time_days": 51.2,
+        "safety_days": 30.4,
+        "demand_factor": 1.05,
+        "price_factor": 1.09,
+        "risk_items": [
+          {
+            "id": "NUT-0001",
+            "name": "RUTF Plumpy'Nut 92 g Sachet",
+            "cover": 75.23809523809524
+          },
+          {
+            "id": "NUT-0003",
+            "name": "F-100 Therapeutic Milk 400 g",
+            "cover": 30.476190476190474
+          },
+          {
+            "id": "CON-0001",
+            "name": "Examination Gloves, Latex (Pair)",
+            "cover": 80.0
+          },
+          {
+            "id": "NUT-0007",
+            "name": "Infant Formula, Therapeutic (Lactogen-free)",
+            "cover": 59.047619047619044
+          },
+          {
+            "id": "CON-0019",
+            "name": "Hand Sanitiser 500 ml",
+            "cover": 78.09523809523809
+          },
+          {
+            "id": "MED-0024",
+            "name": "Artemether + Lumefantrine 20/120 mg",
+            "cover": 43.80952380952381
+          },
+          {
+            "id": "CON-0006",
+            "name": "IV Giving Set",
+            "cover": 71.42857142857143
+          },
+          {
+            "id": "CON-0017",
+            "name": "Suture Polyglactin 2-0",
+            "cover": 59.047619047619044
+          }
+        ]
+      },
+      "delta": {
+        "consumption_value": 0.0,
+        "purchase_value": 5150230.72,
+        "funding_gap": 0.0,
+        "expiry_risk_value": 0.0,
+        "stockout_items": 16,
+        "working_capital": 5150230.72,
+        "cost_per_beneficiary": 0.0,
+        "overstock_value": 0.0
+      }
+    },
+    {
+      "id": "S4",
+      "name": "Funding cut -20%",
+      "rationale": "Donor reduction or a hold on a grant instalment.",
+      "levers": {
+        "funding_cut_pct": 0.2
+      },
+      "changed": {
+        "funding_cut_pct": {
+          "baseline": 0.0,
+          "scenario": 0.2
+        }
+      },
+      "result": {
+        "consumption_value": 154591629.36,
+        "purchase_value": 157178997.71,
+        "top_up": 268493.91,
+        "excess_stock_released": 0.0,
+        "wastage_replacement": 2318874.44,
+        "target_stock_value": 45826888.48,
+        "available_stock": 45558394.57,
+        "ratio": 0.984,
+        "budget_available": 121684266.66,
+        "budget_utilisation": 1.27,
+        "funding_gap": 32907362.69,
+        "expiry_risk_value": 3944941.69,
+        "overstock_value": 114217.46,
+        "overstock_items": 3,
+        "stockout_items": 2,
+        "working_capital": 45826888.48,
+        "beneficiaries": 314196,
+        "cost_per_beneficiary": 492.02,
+        "lead_time_days": 32.0,
+        "safety_days": 18.2,
+        "demand_factor": 1.05,
+        "price_factor": 1.09,
+        "risk_items": [
+          {
+            "id": "NUT-0003",
+            "name": "F-100 Therapeutic Milk 400 g",
+            "cover": 30.476190476190474
+          },
+          {
+            "id": "MED-0024",
+            "name": "Artemether + Lumefantrine 20/120 mg",
+            "cover": 43.80952380952381
+          }
+        ]
+      },
+      "delta": {
+        "consumption_value": 0.0,
+        "purchase_value": 0.0,
+        "funding_gap": 30421066.66,
+        "expiry_risk_value": 0.0,
+        "stockout_items": 0,
+        "working_capital": 0.0,
+        "cost_per_beneficiary": 0.0,
+        "overstock_value": 0.0
+      }
+    },
+    {
+      "id": "S5",
+      "name": "Optimised policy (cover 60, safety 10, redistribute 60%)",
+      "rationale": "Tighter cover policy plus redistribution instead of new buying.",
+      "levers": {
+        "target_cover_days": 60,
+        "safety_stock_days": 10,
+        "redistribution_share_pct": 0.6,
+        "lead_time_multiplier": 1.0,
+        "excess_stock_release_pct": 0.9
+      },
+      "changed": {
+        "target_cover_days": {
+          "baseline": 90,
+          "scenario": 60
+        },
+        "safety_stock_days": {
+          "baseline": 15,
+          "scenario": 10
+        },
+        "redistribution_share_pct": {
+          "baseline": 0.0,
+          "scenario": 0.6
+        },
+        "excess_stock_release_pct": {
+          "baseline": 0.8,
+          "scenario": 0.9
+        }
+      },
+      "result": {
+        "consumption_value": 154591629.36,
+        "purchase_value": 143810678.94,
+        "top_up": 0.0,
+        "excess_stock_released": 13099824.86,
+        "wastage_replacement": 2318874.44,
+        "target_stock_value": 31003033.61,
+        "available_stock": 45558394.57,
+        "ratio": 1.075,
+        "budget_available": 152105333.33,
+        "budget_utilisation": 1.016,
+        "funding_gap": 2486296.03,
+        "expiry_risk_value": 3920956.02,
+        "overstock_value": 114217.46,
+        "overstock_items": 3,
+        "stockout_items": 2,
+        "working_capital": 31003033.61,
+        "beneficiaries": 314196,
+        "cost_per_beneficiary": 492.02,
+        "lead_time_days": 32.0,
+        "safety_days": 13.2,
+        "demand_factor": 1.05,
+        "price_factor": 1.09,
+        "risk_items": [
+          {
+            "id": "NUT-0003",
+            "name": "F-100 Therapeutic Milk 400 g",
+            "cover": 30.476190476190474
+          },
+          {
+            "id": "MED-0024",
+            "name": "Artemether + Lumefantrine 20/120 mg",
+            "cover": 43.80952380952381
+          }
+        ]
+      },
+      "delta": {
+        "consumption_value": 0.0,
+        "purchase_value": -13368318.77,
+        "funding_gap": 0.0,
+        "expiry_risk_value": -23985.67,
+        "stockout_items": 0,
+        "working_capital": -14823854.87,
+        "cost_per_beneficiary": 0.0,
+        "overstock_value": 0.0
+      }
+    },
+    {
+      "id": "S6",
+      "name": "Framework contracting (-8% price, lead time x0.8)",
+      "rationale": "Consolidate the top items into a framework agreement.",
+      "levers": {
+        "bulk_discount_pct": 0.08,
+        "lead_time_multiplier": 0.8,
+        "supplier_reliability_pct": 0.95
+      },
+      "changed": {
+        "bulk_discount_pct": {
+          "baseline": 0.0,
+          "scenario": 0.08
+        },
+        "lead_time_multiplier": {
+          "baseline": 1.0,
+          "scenario": 0.8
+        },
+        "supplier_reliability_pct": {
+          "baseline": 0.9,
+          "scenario": 0.95
+        }
+      },
+      "result": {
+        "consumption_value": 142224299.01,
+        "purchase_value": 141041026.74,
+        "top_up": 0.0,
+        "excess_stock_released": 3316636.75,
+        "wastage_replacement": 2133364.49,
+        "target_stock_value": 41412598.63,
+        "available_stock": 45558394.57,
+        "ratio": 1.008,
+        "budget_available": 152105333.33,
+        "budget_utilisation": 0.935,
+        "funding_gap": 0.0,
+        "expiry_risk_value": 3759431.73,
+        "overstock_value": 114217.46,
+        "overstock_items": 3,
+        "stockout_items": 1,
+        "working_capital": 41412598.63,
+        "beneficiaries": 314196,
+        "cost_per_beneficiary": 452.66,
+        "lead_time_days": 25.6,
+        "safety_days": 16.3,
+        "demand_factor": 1.05,
+        "price_factor": 1.003,
+        "risk_items": [
+          {
+            "id": "NUT-0003",
+            "name": "F-100 Therapeutic Milk 400 g",
+            "cover": 30.476190476190474
+          }
+        ]
+      },
+      "delta": {
+        "consumption_value": -12367330.35,
+        "purchase_value": -16137970.97,
+        "funding_gap": -2486296.03,
+        "expiry_risk_value": -185509.96,
+        "stockout_items": -1,
+        "working_capital": -4414289.85,
+        "cost_per_beneficiary": -39.36,
+        "overstock_value": 0.0
+      }
+    },
+    {
+      "id": "S7",
+      "name": "Combined downside (demand +15%, price +10%, lead time x1.4, funding -10%)",
+      "rationale": "The plausible worst case: surge demand plus inflation plus supply delay plus a funding hold.",
+      "levers": {
+        "demand_growth_pct": 0.15,
+        "price_shock_pct": 0.1,
+        "lead_time_multiplier": 1.4,
+        "supplier_reliability_pct": 0.75,
+        "funding_cut_pct": 0.1
+      },
+      "changed": {
+        "demand_growth_pct": {
+          "baseline": 0.05,
+          "scenario": 0.15
+        },
+        "price_shock_pct": {
+          "baseline": 0.0,
+          "scenario": 0.1
+        },
+        "lead_time_multiplier": {
+          "baseline": 1.0,
+          "scenario": 1.4
+        },
+        "supplier_reliability_pct": {
+          "baseline": 0.9,
+          "scenario": 0.75
+        },
+        "funding_cut_pct": {
+          "baseline": 0.0,
+          "scenario": 0.1
+        }
+      },
+      "result": {
+        "consumption_value": 186246105.84,
+        "purchase_value": 202773998.75,
+        "top_up": 13734201.32,
+        "excess_stock_released": 0.0,
+        "wastage_replacement": 2793691.59,
+        "target_stock_value": 59292595.89,
+        "available_stock": 45558394.57,
+        "ratio": 0.918,
+        "budget_available": 136894800.0,
+        "budget_utilisation": 1.361,
+        "funding_gap": 49351305.85,
+        "expiry_risk_value": 4397475.52,
+        "overstock_value": 50550.86,
+        "overstock_items": 1,
+        "stockout_items": 14,
+        "working_capital": 59292595.89,
+        "beneficiaries": 314196,
+        "cost_per_beneficiary": 592.77,
+        "lead_time_days": 44.8,
+        "safety_days": 26.2,
+        "demand_factor": 1.15,
+        "price_factor": 1.199,
+        "risk_items": [
+          {
+            "id": "NUT-0001",
+            "name": "RUTF Plumpy'Nut 92 g Sachet",
+            "cover": 68.69565217391305
+          },
+          {
+            "id": "NUT-0003",
+            "name": "F-100 Therapeutic Milk 400 g",
+            "cover": 27.826086956521742
+          },
+          {
+            "id": "NUT-0007",
+            "name": "Infant Formula, Therapeutic (Lactogen-free)",
+            "cover": 53.913043478260875
+          },
+          {
+            "id": "MED-0024",
+            "name": "Artemether + Lumefantrine 20/120 mg",
+            "cover": 40.0
+          },
+          {
+            "id": "CON-0006",
+            "name": "IV Giving Set",
+            "cover": 65.21739130434783
+          },
+          {
+            "id": "CON-0017",
+            "name": "Suture Polyglactin 2-0",
+            "cover": 53.913043478260875
+          },
+          {
+            "id": "MED-0016",
+            "name": "Ferrous Sulphate + Folic Acid Tablet",
+            "cover": 66.95652173913044
+          },
+          {
+            "id": "MED-0017",
+            "name": "Zinc Sulphate 20 mg Dispersible Tablet",
+            "cover": 66.95652173913044
+          }
+        ]
+      },
+      "delta": {
+        "consumption_value": 31654476.48,
+        "purchase_value": 45595001.04,
+        "funding_gap": 46865009.82,
+        "expiry_risk_value": 452533.83,
+        "stockout_items": 12,
+        "working_capital": 13465707.41,
+        "cost_per_beneficiary": 100.75,
+        "overstock_value": -63666.6
+      }
+    },
+    {
+      "id": "S8",
+      "name": "Optimised response to the downside (S7 + policy and framework levers)",
+      "rationale": "Shows how much of the downside can be absorbed by levers available to management.",
+      "levers": {
+        "demand_growth_pct": 0.15,
+        "price_shock_pct": 0.1,
+        "lead_time_multiplier": 1.2,
+        "supplier_reliability_pct": 0.85,
+        "funding_cut_pct": 0.1,
+        "target_cover_days": 60,
+        "safety_stock_days": 10,
+        "redistribution_share_pct": 0.6,
+        "bulk_discount_pct": 0.08
+      },
+      "changed": {
+        "demand_growth_pct": {
+          "baseline": 0.05,
+          "scenario": 0.15
+        },
+        "price_shock_pct": {
+          "baseline": 0.0,
+          "scenario": 0.1
+        },
+        "lead_time_multiplier": {
+          "baseline": 1.0,
+          "scenario": 1.2
+        },
+        "supplier_reliability_pct": {
+          "baseline": 0.9,
+          "scenario": 0.85
+        },
+        "funding_cut_pct": {
+          "baseline": 0.0,
+          "scenario": 0.1
+        },
+        "target_cover_days": {
+          "baseline": 90,
+          "scenario": 60
+        },
+        "safety_stock_days": {
+          "baseline": 15,
+          "scenario": 10
+        },
+        "redistribution_share_pct": {
+          "baseline": 0.0,
+          "scenario": 0.6
+        },
+        "bulk_discount_pct": {
+          "baseline": 0.0,
+          "scenario": 0.08
+        }
+      },
+      "result": {
+        "consumption_value": 171346417.38,
+        "purchase_value": 165921853.23,
+        "top_up": 0.0,
+        "excess_stock_released": 7994760.41,
+        "wastage_replacement": 2570196.26,
+        "target_stock_value": 35564944.06,
+        "available_stock": 45558394.57,
+        "ratio": 1.033,
+        "budget_available": 136894800.0,
+        "budget_utilisation": 1.252,
+        "funding_gap": 34451617.38,
+        "expiry_risk_value": 4163364.52,
+        "overstock_value": 50550.86,
+        "overstock_items": 1,
+        "stockout_items": 5,
+        "working_capital": 35564944.06,
+        "beneficiaries": 314196,
+        "cost_per_beneficiary": 545.35,
+        "lead_time_days": 38.4,
+        "safety_days": 15.8,
+        "demand_factor": 1.15,
+        "price_factor": 1.103,
+        "risk_items": [
+          {
+            "id": "NUT-0003",
+            "name": "F-100 Therapeutic Milk 400 g",
+            "cover": 27.826086956521742
+          },
+          {
+            "id": "NUT-0007",
+            "name": "Infant Formula, Therapeutic (Lactogen-free)",
+            "cover": 53.913043478260875
+          },
+          {
+            "id": "MED-0024",
+            "name": "Artemether + Lumefantrine 20/120 mg",
+            "cover": 40.0
+          },
+          {
+            "id": "CON-0017",
+            "name": "Suture Polyglactin 2-0",
+            "cover": 53.913043478260875
+          },
+          {
+            "id": "MED-0023",
+            "name": "Mebendazole 100 mg Tablet",
+            "cover": 47.82608695652174
+          }
+        ]
+      },
+      "delta": {
+        "consumption_value": 16754788.02,
+        "purchase_value": 8742855.52,
+        "funding_gap": 31965321.35,
+        "expiry_risk_value": 218422.83,
+        "stockout_items": 3,
+        "working_capital": -10261944.42,
+        "cost_per_beneficiary": 53.33,
+        "overstock_value": -63666.6
+      }
+    }
+  ],
+  "sensitivity": {
+    "rows": [
+      {
+        "key": "demand_growth_pct",
+        "low": 0.0,
+        "high": 0.25,
+        "outputs": {
+          "purchase_value": {
+            "base": 157178997.71,
+            "low": 147907583.95,
+            "high": 195795643.86,
+            "swing": 47888059.91
+          },
+          "funding_gap": {
+            "base": 2486296.03,
+            "low": 0.0,
+            "high": 31932320.67,
+            "swing": 31932320.67
+          },
+          "expiry_risk_value": {
+            "base": 3944941.69,
+            "low": 3859375.92,
+            "high": 4355967.95,
+            "swing": 496592.03
+          },
+          "stockout_items": {
+            "base": 2,
+            "low": 2,
+            "high": 5,
+            "swing": 3
+          }
+        }
+      },
+      {
+        "key": "price_inflation_pct",
+        "low": 0.03,
+        "high": 0.18,
+        "outputs": {
+          "purchase_value": {
+            "base": 157178997.71,
+            "low": 146469958.68,
+            "high": 173918782.39,
+            "swing": 27448823.71
+          },
+          "funding_gap": {
+            "base": 2486296.03,
+            "low": 0.0,
+            "high": 15250742.49,
+            "swing": 15250742.49
+          },
+          "expiry_risk_value": {
+            "base": 3944941.69,
+            "low": 3817297.22,
+            "high": 4136408.38,
+            "swing": 319111.16
+          },
+          "stockout_items": {
+            "base": 2,
+            "low": 2,
+            "high": 2,
+            "swing": 0
+          }
+        }
+      },
+      {
+        "key": "lead_time_multiplier",
+        "low": 0.8,
+        "high": 1.8,
+        "outputs": {
+          "purchase_value": {
+            "base": 157178997.71,
+            "low": 156908447.11,
+            "high": 158263256.81,
+            "swing": 1354809.7
+          },
+          "funding_gap": {
+            "base": 2486296.03,
+            "low": 2486296.03,
+            "high": 2486296.03,
+            "swing": 0.0
+          },
+          "expiry_risk_value": {
+            "base": 3944941.69,
+            "low": 3944941.69,
+            "high": 3944941.69,
+            "swing": 0.0
+          },
+          "stockout_items": {
+            "base": 2,
+            "low": 1,
+            "high": 16,
+            "swing": 15
+          }
+        }
+      },
+      {
+        "key": "target_cover_days",
+        "low": 45,
+        "high": 120,
+        "outputs": {
+          "purchase_value": {
+            "base": 157178997.71,
+            "low": 141877905.35,
+            "high": 169885159.03,
+            "swing": 28007253.68
+          },
+          "funding_gap": {
+            "base": 2486296.03,
+            "low": 2486296.03,
+            "high": 2486296.03,
+            "swing": 0.0
+          },
+          "expiry_risk_value": {
+            "base": 3944941.69,
+            "low": 3944941.69,
+            "high": 3944941.69,
+            "swing": 0.0
+          },
+          "stockout_items": {
+            "base": 2,
+            "low": 2,
+            "high": 2,
+            "swing": 0
+          }
+        }
+      },
+      {
+        "key": "funding_cut_pct",
+        "low": 0.0,
+        "high": 0.25,
+        "outputs": {
+          "purchase_value": {
+            "base": 157178997.71,
+            "low": 157178997.71,
+            "high": 157178997.71,
+            "swing": 0.0
+          },
+          "funding_gap": {
+            "base": 2486296.03,
+            "low": 2486296.03,
+            "high": 40512629.36,
+            "swing": 38026333.33
+          },
+          "expiry_risk_value": {
+            "base": 3944941.69,
+            "low": 3944941.69,
+            "high": 3944941.69,
+            "swing": 0.0
+          },
+          "stockout_items": {
+            "base": 2,
+            "low": 2,
+            "high": 2,
+            "swing": 0
+          }
+        }
+      },
+      {
+        "key": "wastage_rate_pct",
+        "low": 0.005,
+        "high": 0.04,
+        "outputs": {
+          "purchase_value": {
+            "base": 157178997.71,
+            "low": 155633081.42,
+            "high": 161043788.44,
+            "swing": 5410707.02
+          },
+          "funding_gap": {
+            "base": 2486296.03,
+            "low": 2486296.03,
+            "high": 2486296.03,
+            "swing": 0.0
+          },
+          "expiry_risk_value": {
+            "base": 3944941.69,
+            "low": 2399025.39,
+            "high": 7809732.42,
+            "swing": 5410707.03
+          },
+          "stockout_items": {
+            "base": 2,
+            "low": 2,
+            "high": 2,
+            "swing": 0
+          }
+        }
+      },
+      {
+        "key": "redistribution_share_pct",
+        "low": 0.0,
+        "high": 0.8,
+        "outputs": {
+          "purchase_value": {
+            "base": 157178997.71,
+            "low": 157178997.71,
+            "high": 157178997.71,
+            "swing": 0.0
+          },
+          "funding_gap": {
+            "base": 2486296.03,
+            "low": 2486296.03,
+            "high": 2486296.03,
+            "swing": 0.0
+          },
+          "expiry_risk_value": {
+            "base": 3944941.69,
+            "low": 3944941.69,
+            "high": 3912960.8,
+            "swing": 31980.89
+          },
+          "stockout_items": {
+            "base": 2,
+            "low": 2,
+            "high": 2,
+            "swing": 0
+          }
+        }
+      }
+    ],
+    "order": {
+      "purchase_value": [
+        "demand_growth_pct",
+        "target_cover_days",
+        "price_inflation_pct",
+        "wastage_rate_pct",
+        "lead_time_multiplier",
+        "funding_cut_pct",
+        "redistribution_share_pct"
+      ],
+      "funding_gap": [
+        "funding_cut_pct",
+        "demand_growth_pct",
+        "price_inflation_pct",
+        "lead_time_multiplier",
+        "target_cover_days",
+        "wastage_rate_pct",
+        "redistribution_share_pct"
+      ],
+      "expiry_risk_value": [
+        "wastage_rate_pct",
+        "demand_growth_pct",
+        "price_inflation_pct",
+        "redistribution_share_pct",
+        "lead_time_multiplier",
+        "target_cover_days",
+        "funding_cut_pct"
+      ],
+      "stockout_items": [
+        "lead_time_multiplier",
+        "demand_growth_pct",
+        "price_inflation_pct",
+        "target_cover_days",
+        "funding_cut_pct",
+        "wastage_rate_pct",
+        "redistribution_share_pct"
+      ]
+    },
+    "outputs": [
+      "purchase_value",
+      "funding_gap",
+      "expiry_risk_value",
+      "stockout_items"
+    ]
+  },
+  "breakeven": [
+    {
+      "key": "price_inflation_pct",
+      "target": "funding_gap == 0",
+      "range": [
+        0.0,
+        1.0
+      ],
+      "value_at_low": 0.0,
+      "value_at_high": 131549032.46,
+      "breakeven": 0.0725,
+      "note": "Solved by bisection to 0.0001"
+    },
+    {
+      "key": "demand_growth_pct",
+      "target": "funding_gap == 0",
+      "range": [
+        -0.5,
+        1.5
+      ],
+      "value_at_low": 0.0,
+      "value_at_high": 215969974.66,
+      "breakeven": 0.0331,
+      "note": "Solved by bisection to 0.0001"
+    },
+    {
+      "key": "funding_cut_pct",
+      "target": "funding_gap == 0",
+      "range": [
+        0.0,
+        0.9
+      ],
+      "value_at_low": 2486296.03,
+      "value_at_high": 139381096.02,
+      "breakeven": null,
+      "note": "Already breached at the lower bound: the break-even value is below the search range"
+    },
+    {
+      "key": "target_cover_days",
+      "target": "curve",
+      "range": [
+        30,
+        210
+      ],
+      "value_at_low": 0,
+      "value_at_high": 0,
+      "breakeven": null,
+      "note": "Trade-off curve: purchase cost, expiry risk and working capital by cover policy",
+      "curve": [
+        {
+          "x": 30.0,
+          "purchase": 136795440.82,
+          "expiry": 3944941.69,
+          "capital": 20414565.85,
+          "stockouts": 2
+        },
+        {
+          "x": 36.0,
+          "purchase": 138828426.63,
+          "expiry": 3944941.69,
+          "capital": 22955798.11,
+          "stockouts": 2
+        },
+        {
+          "x": 42.0,
+          "purchase": 140861412.44,
+          "expiry": 3944941.69,
+          "capital": 25497030.38,
+          "stockouts": 2
+        },
+        {
+          "x": 48.0,
+          "purchase": 142894398.25,
+          "expiry": 3944941.69,
+          "capital": 28038262.64,
+          "stockouts": 2
+        },
+        {
+          "x": 54.0,
+          "purchase": 144927384.06,
+          "expiry": 3944941.69,
+          "capital": 30579494.9,
+          "stockouts": 2
+        },
+        {
+          "x": 60.0,
+          "purchase": 146960369.87,
+          "expiry": 3944941.69,
+          "capital": 33120727.17,
+          "stockouts": 2
+        },
+        {
+          "x": 66.0,
+          "purchase": 148993355.68,
+          "expiry": 3944941.69,
+          "capital": 35661959.43,
+          "stockouts": 2
+        },
+        {
+          "x": 72.0,
+          "purchase": 151026341.5,
+          "expiry": 3944941.69,
+          "capital": 38203191.69,
+          "stockouts": 2
+        },
+        {
+          "x": 78.0,
+          "purchase": 153059327.31,
+          "expiry": 3944941.69,
+          "capital": 40744423.96,
+          "stockouts": 2
+        },
+        {
+          "x": 84.0,
+          "purchase": 155092313.12,
+          "expiry": 3944941.69,
+          "capital": 43285656.22,
+          "stockouts": 2
+        },
+        {
+          "x": 90.0,
+          "purchase": 157178997.71,
+          "expiry": 3944941.69,
+          "capital": 45826888.48,
+          "stockouts": 2
+        },
+        {
+          "x": 96.0,
+          "purchase": 159720229.97,
+          "expiry": 3944941.69,
+          "capital": 48368120.75,
+          "stockouts": 2
+        },
+        {
+          "x": 102.0,
+          "purchase": 162261462.24,
+          "expiry": 3944941.69,
+          "capital": 50909353.01,
+          "stockouts": 2
+        },
+        {
+          "x": 108.0,
+          "purchase": 164802694.5,
+          "expiry": 3944941.69,
+          "capital": 53450585.27,
+          "stockouts": 2
+        },
+        {
+          "x": 114.0,
+          "purchase": 167343926.76,
+          "expiry": 3944941.69,
+          "capital": 55991817.54,
+          "stockouts": 2
+        },
+        {
+          "x": 120.0,
+          "purchase": 169885159.03,
+          "expiry": 3944941.69,
+          "capital": 58533049.8,
+          "stockouts": 2
+        },
+        {
+          "x": 126.0,
+          "purchase": 172426391.29,
+          "expiry": 3944941.69,
+          "capital": 61074282.06,
+          "stockouts": 2
+        },
+        {
+          "x": 132.0,
+          "purchase": 174967623.55,
+          "expiry": 3944941.69,
+          "capital": 63615514.33,
+          "stockouts": 2
+        },
+        {
+          "x": 138.0,
+          "purchase": 177508855.82,
+          "expiry": 3944941.69,
+          "capital": 66156746.59,
+          "stockouts": 2
+        },
+        {
+          "x": 144.0,
+          "purchase": 180050088.08,
+          "expiry": 3944941.69,
+          "capital": 68697978.85,
+          "stockouts": 2
+        },
+        {
+          "x": 150.0,
+          "purchase": 182591320.34,
+          "expiry": 3944941.69,
+          "capital": 71239211.12,
+          "stockouts": 2
+        },
+        {
+          "x": 156.0,
+          "purchase": 185132552.61,
+          "expiry": 3944941.69,
+          "capital": 73780443.38,
+          "stockouts": 2
+        },
+        {
+          "x": 162.0,
+          "purchase": 187673784.87,
+          "expiry": 3944941.69,
+          "capital": 76321675.64,
+          "stockouts": 2
+        },
+        {
+          "x": 168.0,
+          "purchase": 190215017.13,
+          "expiry": 3944941.69,
+          "capital": 78862907.91,
+          "stockouts": 2
+        },
+        {
+          "x": 174.0,
+          "purchase": 192756249.4,
+          "expiry": 3944941.69,
+          "capital": 81404140.17,
+          "stockouts": 2
+        },
+        {
+          "x": 180.0,
+          "purchase": 195297481.66,
+          "expiry": 3944941.69,
+          "capital": 83945372.43,
+          "stockouts": 2
+        },
+        {
+          "x": 186.0,
+          "purchase": 197838713.92,
+          "expiry": 3944941.69,
+          "capital": 86486604.7,
+          "stockouts": 2
+        },
+        {
+          "x": 192.0,
+          "purchase": 200379946.19,
+          "expiry": 3944941.69,
+          "capital": 89027836.96,
+          "stockouts": 2
+        },
+        {
+          "x": 198.0,
+          "purchase": 202921178.45,
+          "expiry": 3944941.69,
+          "capital": 91569069.22,
+          "stockouts": 2
+        },
+        {
+          "x": 204.0,
+          "purchase": 205462410.71,
+          "expiry": 3944941.69,
+          "capital": 94110301.49,
+          "stockouts": 2
+        },
+        {
+          "x": 210.0,
+          "purchase": 208003642.98,
+          "expiry": 3944941.69,
+          "capital": 96651533.75,
+          "stockouts": 2
+        }
+      ]
+    }
+  ],
+  "twoway": {
+    "row_key": "demand_growth_pct",
+    "row_values": [
+      -0.2,
+      -0.1,
+      0.0,
+      0.1,
+      0.2,
+      0.3
+    ],
+    "col_key": "price_inflation_pct",
+    "col_values": [
+      0.0,
+      0.05,
+      0.09,
+      0.15,
+      0.2,
+      0.25
+    ],
+    "tables": {
+      "funding_gap": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          3229200.32,
+          9982875.69,
+          16736551.07
+        ],
+        [
+          0.0,
+          3904567.86,
+          9847802.19,
+          18762653.68,
+          26191696.6,
+          33620739.51
+        ],
+        [
+          9982875.69,
+          18087286.15,
+          24570814.51,
+          34296107.05,
+          42400517.5,
+          50504927.95
+        ],
+        [
+          23490226.45,
+          32270004.43,
+          39293826.83,
+          49829560.41,
+          58609338.4,
+          67389116.39
+        ]
+      ],
+      "budget_utilisation": [
+        [
+          0.71,
+          0.746,
+          0.774,
+          0.817,
+          0.853,
+          0.888
+        ],
+        [
+          0.799,
+          0.839,
+          0.871,
+          0.919,
+          0.959,
+          0.999
+        ],
+        [
+          0.888,
+          0.932,
+          0.968,
+          1.021,
+          1.066,
+          1.11
+        ],
+        [
+          0.977,
+          1.026,
+          1.065,
+          1.123,
+          1.172,
+          1.221
+        ],
+        [
+          1.066,
+          1.119,
+          1.162,
+          1.225,
+          1.279,
+          1.332
+        ],
+        [
+          1.154,
+          1.212,
+          1.258,
+          1.328,
+          1.385,
+          1.443
+        ]
+      ]
+    }
+  },
+  "lever_spec": [
+    {
+      "key": "demand_growth_pct",
+      "name": "Demand growth (annual)",
+      "value": 0.05,
+      "unit": "%",
+      "min": -0.3,
+      "max": 0.5,
+      "group": "Demand",
+      "basis": "Programme growth trend over the reporting window",
+      "owner": "Programme",
+      "governs": "Consumption value, purchase requirement, funding gap, cost per beneficiary"
+    },
+    {
+      "key": "service_volume_growth_pct",
+      "name": "Service volume (beneficiary) growth",
+      "value": 0.04,
+      "unit": "%",
+      "min": -0.3,
+      "max": 0.5,
+      "group": "Demand",
+      "basis": "Beneficiary trend in the service-delivery data",
+      "owner": "Programme",
+      "governs": "Cost per beneficiary"
+    },
+    {
+      "key": "activity_factor",
+      "name": "Project activity factor (next 12 months)",
+      "value": "auto",
+      "unit": "Ratio",
+      "min": 0.1,
+      "max": 1.0,
+      "group": "Demand",
+      "basis": "Share of the next 12 months in which at least one project is active (from project end dates)",
+      "owner": "Programme",
+      "governs": "All annualised projections"
+    },
+    {
+      "key": "price_inflation_pct",
+      "name": "Price inflation (annual)",
+      "value": 0.09,
+      "unit": "%",
+      "min": -0.1,
+      "max": 0.4,
+      "group": "Price",
+      "basis": "Weighted average unit-price movement in the purchase history",
+      "owner": "Procurement",
+      "governs": "Consumption value, purchase value, funding gap, price variance"
+    },
+    {
+      "key": "price_shock_pct",
+      "name": "One-off price shock",
+      "value": 0.0,
+      "unit": "%",
+      "min": -0.2,
+      "max": 0.5,
+      "group": "Price",
+      "basis": "Scenario lever for a market, currency or contract event",
+      "owner": "Procurement",
+      "governs": "Consumption value, purchase value, funding gap"
+    },
+    {
+      "key": "bulk_discount_pct",
+      "name": "Bulk / framework discount",
+      "value": 0.0,
+      "unit": "%",
+      "min": 0.0,
+      "max": 0.25,
+      "group": "Price",
+      "basis": "Negotiated discount on consolidated demand",
+      "owner": "Procurement",
+      "governs": "Purchase value, ratio"
+    },
+    {
+      "key": "lead_time_multiplier",
+      "name": "Supplier lead-time multiplier",
+      "value": 1.0,
+      "unit": "x",
+      "min": 0.5,
+      "max": 3.0,
+      "group": "Supply",
+      "basis": "1.00 = current average lead time of the supplier base",
+      "owner": "Procurement",
+      "governs": "Stock-out risk, safety stock, target stock, purchase requirement"
+    },
+    {
+      "key": "supplier_reliability_pct",
+      "name": "Supplier on-time reliability",
+      "value": 0.9,
+      "unit": "%",
+      "min": 0.4,
+      "max": 1.0,
+      "group": "Supply",
+      "basis": "Share of orders received within the agreed lead time",
+      "owner": "Procurement",
+      "governs": "Safety stock, stock-out risk"
+    },
+    {
+      "key": "target_cover_days",
+      "name": "Target stock cover",
+      "value": 90,
+      "unit": "Days",
+      "min": 15,
+      "max": 240,
+      "group": "Policy",
+      "basis": "Policy: cover to hold after each purchase cycle",
+      "owner": "Head of Procurement",
+      "governs": "Target stock level, purchase requirement, working capital, expiry risk"
+    },
+    {
+      "key": "safety_stock_days",
+      "name": "Safety stock",
+      "value": 15,
+      "unit": "Days",
+      "min": 0,
+      "max": 90,
+      "group": "Policy",
+      "basis": "Buffer against lead-time and demand variability",
+      "owner": "Head of Procurement",
+      "governs": "Target stock level, stock-out risk"
+    },
+    {
+      "key": "max_cover_days",
+      "name": "Maximum acceptable cover",
+      "value": 180,
+      "unit": "Days",
+      "min": 60,
+      "max": 365,
+      "group": "Policy",
+      "basis": "Above this, stock counts as overstocked",
+      "owner": "Supply chain",
+      "governs": "Overstock value, expiry risk"
+    },
+    {
+      "key": "expiry_alert_days",
+      "name": "Expiry alert window",
+      "value": 60,
+      "unit": "Days",
+      "min": 15,
+      "max": 180,
+      "group": "Policy",
+      "basis": "Alert before expiry for redistribution or consumption",
+      "owner": "Stores",
+      "governs": "Expiry risk value, disposition actions"
+    },
+    {
+      "key": "wastage_rate_pct",
+      "name": "Wastage / write-off rate",
+      "value": 0.015,
+      "unit": "%",
+      "min": 0.0,
+      "max": 0.1,
+      "group": "Policy",
+      "basis": "Observed expired and damaged stock as a share of consumption",
+      "owner": "Stores",
+      "governs": "Expiry risk value, purchase requirement"
+    },
+    {
+      "key": "redistribution_share_pct",
+      "name": "Overstock redistributed",
+      "value": 0.0,
+      "unit": "%",
+      "min": 0.0,
+      "max": 1.0,
+      "group": "Policy",
+      "basis": "Share of excess stock moved to a project with demand instead of being written off",
+      "owner": "Supply chain",
+      "governs": "Expiry risk value, purchase requirement"
+    },
+    {
+      "key": "funding_cut_pct",
+      "name": "Funding reduction",
+      "value": 0.0,
+      "unit": "%",
+      "min": 0.0,
+      "max": 0.6,
+      "group": "Budget",
+      "basis": "Scenario lever for a grant reduction or donor hold",
+      "owner": "Finance & Grants",
+      "governs": "Budget available, funding gap, budget utilisation"
+    },
+    {
+      "key": "budget_growth_pct",
+      "name": "Budget growth / reallocation",
+      "value": 0.0,
+      "unit": "%",
+      "min": -0.3,
+      "max": 0.5,
+      "group": "Budget",
+      "basis": "Approved additional budget or internal reallocation",
+      "owner": "Finance & Grants",
+      "governs": "Budget available, funding gap, budget utilisation"
+    },
+    {
+      "key": "excess_stock_release_pct",
+      "name": "Excess stock used instead of buying",
+      "value": 0.8,
+      "unit": "%",
+      "min": 0.0,
+      "max": 1.0,
+      "group": "Policy",
+      "basis": "Share of stock held above the target cover that offsets new purchases (redistribution or planned drawdown)",
+      "owner": "Supply chain",
+      "governs": "Purchase requirement, working capital, funding gap"
+    },
+    {
+      "key": "order_cycle_days",
+      "name": "Purchase cycle length",
+      "value": 30,
+      "unit": "Days",
+      "min": 7,
+      "max": 120,
+      "group": "Supply",
+      "basis": "Days between requisition cycles",
+      "owner": "Procurement",
+      "governs": "Number of purchase cycles, order frequency, transaction load"
+    }
+  ],
+  "scenario_defs": [
+    {
+      "id": "S0",
+      "name": "Baseline (current parameters)",
+      "levers": {},
+      "rationale": "Reference case: current demand, price, supply and policy. Every other scenario is measured against this."
+    },
+    {
+      "id": "S1",
+      "name": "Demand surge +20%",
+      "levers": {
+        "demand_growth_pct": 0.2
+      },
+      "rationale": "Outbreak, flood response or a new campaign in the service area."
+    },
+    {
+      "id": "S2",
+      "name": "Price shock +15%",
+      "levers": {
+        "price_inflation_pct": 0.09,
+        "price_shock_pct": 0.15
+      },
+      "rationale": "Currency depreciation, loss of a contract price or a supplier exit."
+    },
+    {
+      "id": "S3",
+      "name": "Supply disruption (lead time x1.6, reliability 70%)",
+      "levers": {
+        "lead_time_multiplier": 1.6,
+        "supplier_reliability_pct": 0.7
+      },
+      "rationale": "Import delay, port congestion or a single-source supplier failing."
+    },
+    {
+      "id": "S4",
+      "name": "Funding cut -20%",
+      "levers": {
+        "funding_cut_pct": 0.2
+      },
+      "rationale": "Donor reduction or a hold on a grant instalment."
+    },
+    {
+      "id": "S5",
+      "name": "Optimised policy (cover 60, safety 10, redistribute 60%)",
+      "levers": {
+        "target_cover_days": 60,
+        "safety_stock_days": 10,
+        "redistribution_share_pct": 0.6,
+        "lead_time_multiplier": 1.0,
+        "excess_stock_release_pct": 0.9
+      },
+      "rationale": "Tighter cover policy plus redistribution instead of new buying."
+    },
+    {
+      "id": "S6",
+      "name": "Framework contracting (-8% price, lead time x0.8)",
+      "levers": {
+        "bulk_discount_pct": 0.08,
+        "lead_time_multiplier": 0.8,
+        "supplier_reliability_pct": 0.95
+      },
+      "rationale": "Consolidate the top items into a framework agreement."
+    },
+    {
+      "id": "S7",
+      "name": "Combined downside (demand +15%, price +10%, lead time x1.4, funding -10%)",
+      "levers": {
+        "demand_growth_pct": 0.15,
+        "price_shock_pct": 0.1,
+        "lead_time_multiplier": 1.4,
+        "supplier_reliability_pct": 0.75,
+        "funding_cut_pct": 0.1
+      },
+      "rationale": "The plausible worst case: surge demand plus inflation plus supply delay plus a funding hold."
+    },
+    {
+      "id": "S8",
+      "name": "Optimised response to the downside (S7 + policy and framework levers)",
+      "levers": {
+        "demand_growth_pct": 0.15,
+        "price_shock_pct": 0.1,
+        "lead_time_multiplier": 1.2,
+        "supplier_reliability_pct": 0.85,
+        "funding_cut_pct": 0.1,
+        "target_cover_days": 60,
+        "safety_stock_days": 10,
+        "redistribution_share_pct": 0.6,
+        "bulk_discount_pct": 0.08
+      },
+      "rationale": "Shows how much of the downside can be absorbed by levers available to management."
+    }
+  ]
+}
