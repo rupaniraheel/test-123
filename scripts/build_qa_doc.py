@@ -797,9 +797,20 @@ if curve:
           [[f"{p['x']:.0f}", f"{p['purchase']/1e6:,.1f}", f"{p['expiry']/1e6:,.2f}",
             f"{p['capital']/1e6:,.1f}", str(p["stockouts"])] for p in picks],
           widths=[3.4, 4.0, 3.4, 3.4, 3.0], font=8.2, align_center=(0, 1, 2, 3, 4))
-    para("The curve is flat on the left and rises on the right: below roughly 90 days each additional day of cover buys "
-         "protection cheaply; above it, the purchase requirement and working capital rise faster than the risk falls. That "
-         "knee is the defensible policy point, and it should be reviewed twice a year.", italic=True, size=8.5, color=GREY)
+    lo_p, hi_p = curve[0], curve[-1]
+    mid = min(curve, key=lambda c: abs(c["x"] - 90))
+    per_day = (hi_p["purchase"] - lo_p["purchase"]) / (hi_p["x"] - lo_p["x"])
+    c60 = min(curve, key=lambda c: abs(c["x"] - 60))
+    para(f"Raising cover from {lo_p['x']:.0f} to {hi_p['x']:.0f} days adds PKR "
+         f"{(hi_p['purchase']-lo_p['purchase'])/1e6:,.1f} million to the purchase requirement (about PKR "
+         f"{per_day:,.0f} per additional day of cover) and PKR {(hi_p['capital']-lo_p['capital'])/1e6:,.1f} million to "
+         f"working capital. Stock-out items do not fall across that range ({lo_p['stockouts']} at {lo_p['x']:.0f} days "
+         f"against {hi_p['stockouts']} at {hi_p['x']:.0f} days), because stock-out risk in this model is driven by lead time "
+         f"and supplier reliability, not by the cover target — S3 shows that clearly. The cover decision should therefore be "
+         f"made on cash and expiry grounds: at {c60['x']:.0f} days the purchase requirement is PKR "
+         f"{(mid['purchase']-c60['purchase'])/1e6:,.1f} million lower than at {mid['x']:.0f} days for no measurable service "
+         f"loss. Set the level deliberately, record the reason, and review it twice a year.",
+         italic=True, size=8.5, color=GREY)
 
 doc.add_heading("14.7 Two-way view – demand growth × price inflation", level=2)
 para("A single break-even point is easy to read; a map is easier to plan with. Rows are demand growth, columns are price "
