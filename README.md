@@ -14,6 +14,7 @@ Business analysis pack for the dashboard **“Consumption Analysis in View of Cu
 | `Analytics Question Bank & Data Commentary Guide.docx` | 84-question analytical bank (descriptive / diagnostic / predictive / prescriptive), the six-part data-commentary method, worked examples, cadence, ownership and refresh governance. |
 | `data/Analytics_Question_Bank.xlsx` | Refresh-driven workbook: parameters, five question banks (incl. what-if), **live answers with status flags**, commentary rules and generated commentary feed, refresh checklist. |
 | `data/VPT_WhatIf_Analysis.xlsx` | What-if / scenario workbook: 18 configurable levers, 9 scenarios, live in-Excel calculator, sensitivity tornado, break-even, cover trade-off curve, demand × price grid. |
+| `Session Record - VPT Consumption Analysis (All Chat).docx` | Single-file record of the whole working session: every request and response in order, deliverable inventory, file list and rebuild instructions. |
 | `config/parameters.json` | **The single source of truth** — 15 thresholds + 18 model assumptions + 9 scenarios + sensitivity/break-even/two-way settings. |
 
 ## BRD contents (at a glance)
@@ -49,7 +50,8 @@ Organisation, supplier and product names are used for realism only. Replace with
 | Thresholds (15) | `config/parameters.json → thresholds` | Every Red/Amber/Green flag, commentary trigger and exception rule |
 | Model levers (18) | `config/parameters.json → model` | Every what-if projection: consumption, purchase, gap, expiry, stock-outs, capital |
 | Scenarios (9) | `config/parameters.json → scenarios` | Scenario summary, documents, break-even context |
-| Sensitivity / break-even / two-way | `config/parameters.json` | Tables and charts in the what-if workbook |
+| Sensitivity / break-even / two-way | `Session Record - VPT Consumption Analysis (All Chat).docx` | Single-file record of the whole working session: every request and response in order, deliverable inventory, file list and rebuild instructions. |
+| `config/parameters.json` | Tables and charts in the what-if workbook |
 | Baseline facts | recomputed from data at refresh | Nothing to maintain by hand |
 
 No value is typed twice: the generators read the config, so the workbooks, guide and BRD stay consistent.
