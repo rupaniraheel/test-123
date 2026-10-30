@@ -11,6 +11,8 @@ Business analysis pack for the dashboard **“Consumption Analysis in View of Cu
 | `BRD - Consumption Analysis Dashboard (Vital Pakistan Trust).docx` | Extensive Business Requirements Document — ~12,300 words, 49 tables, 23 sections plus 5 appendices. |
 | `data/VPT_Consumption_Dataset.xlsx` | Realistic synthetic Oracle-style dataset: 27 months (Jul-2024 → Sep-2026), 14,100 PO lines, 16,800 GRN lines, 23,200 issue lines, plus dimensions, budget and service delivery. |
 | `data/VPT_Consumption_Analysis.xlsx` | Analysis / dashboard workbook built **from** that dataset — 15 sheets of KPIs, trends, project, product, budget, price, stock, supplier and exception views with charts. |
+| `Analytics Question Bank & Data Commentary Guide.docx` | 84-question analytical bank (descriptive / diagnostic / predictive / prescriptive), the six-part data-commentary method, worked examples, cadence, ownership and refresh governance. |
+| `data/Analytics_Question_Bank.xlsx` | Refresh-driven workbook: parameters, the four question banks, **live answers with status flags**, commentary rules and the generated commentary feed, refresh checklist. |
 
 ## BRD contents (at a glance)
 
@@ -38,12 +40,18 @@ wireframes, dataset description, requirement traceability)
 
 Organisation, supplier and product names are used for realism only. Replace with Oracle extracts before external use.
 
-## Rebuilding
+## Refresh model (answers change, questions do not)
+
+The question bank is the stable layer: question, purpose, data fields, logic, cadence and owner.
+The answers, status flags and commentary are derived, so a data refresh changes them without anyone editing the workbook.
 
 ```bash
-python3 scripts/generate_dataset.py   # regenerates data/VPT_Consumption_Dataset.xlsx + summary.json
-python3 scripts/build_analysis.py     # regenerates data/VPT_Consumption_Analysis.xlsx
-python3 scripts/build_brd.py          # regenerates the BRD (pulls headline figures from summary.json)
+python3 scripts/refresh_all.py                # full chain: data → findings → workbooks → docs
+python3 scripts/refresh_all.py --no-generate  # refresh answers from the existing dataset only
 ```
+
+Chain: `generate_dataset.py` → `analyze_findings.py` (all metrics → `data/findings.json`) →
+`build_analysis.py` → `build_qa_workbook.py` → `build_qa_doc.py` → `build_brd.py`.
+Thresholds live in `scripts/qa_content.py` (`PARAMETERS`) and are reproduced in the workbook's `01_Parameters` sheet.
 
 Requires `openpyxl` and `python-docx`.

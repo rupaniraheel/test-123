@@ -1,0 +1,518 @@
+{
+  "as_at": "2026-09-30",
+  "start": "2024-07-06",
+  "consumption": 261575946.1,
+  "consumption_all": 279053700.44,
+  "transfers": 17477754.34,
+  "purchase": 300845059.6,
+  "ratio": 0.869,
+  "budget_product": 342237000,
+  "utilisation": 0.764,
+  "unattributed": 6271240.95,
+  "unattributed_pct": 2.4,
+  "unattributed_lines": 468,
+  "beneficiaries": 679751,
+  "cost_per_beneficiary": 384.81,
+  "months": 27,
+  "peak_month": {
+    "key": "2025-08",
+    "value": 14731533.2,
+    "label": "Aug-2025"
+  },
+  "trough_month": {
+    "key": "2024-07",
+    "value": 6861937.91,
+    "label": "Jul-2024"
+  },
+  "avg_month": 9687998.0,
+  "peak_vs_avg": 0.521,
+  "latest": {
+    "label": "Sep-2026",
+    "value": 11002831.71,
+    "prior_3mo_avg": 10524995.71,
+    "vs_3mo_avg": 0.045,
+    "mom": -0.025
+  },
+  "monthly_series": {
+    "Jul-2024": 6861937.91,
+    "Aug-2024": 7953711.66,
+    "Sep-2024": 8006117.98,
+    "Oct-2024": 8323666.09,
+    "Nov-2024": 7224420.0,
+    "Dec-2024": 7407856.51,
+    "Jan-2025": 12227724.09,
+    "Feb-2025": 10499656.63,
+    "Mar-2025": 8664321.38,
+    "Apr-2025": 8632217.21,
+    "May-2025": 8222581.06,
+    "Jun-2025": 8845297.97,
+    "Jul-2025": 10486353.14,
+    "Aug-2025": 14731533.2,
+    "Sep-2025": 14013474.94,
+    "Oct-2025": 10234480.36,
+    "Nov-2025": 9131693.51,
+    "Dec-2025": 10804162.0,
+    "Jan-2026": 11504510.02,
+    "Feb-2026": 11137924.02,
+    "Mar-2026": 7331727.55,
+    "Apr-2026": 8732262.29,
+    "May-2026": 8020497.75,
+    "Jun-2026": 8809441.95,
+    "Jul-2026": 11480271.5,
+    "Aug-2026": 11285273.67,
+    "Sep-2026": 11002831.71
+  },
+  "season_index": {
+    "Jan": 1.225,
+    "Feb": 1.117,
+    "Mar": 0.826,
+    "Apr": 0.896,
+    "May": 0.838,
+    "Jun": 0.911,
+    "Jul": 0.992,
+    "Aug": 1.169,
+    "Sep": 1.136,
+    "Oct": 0.958,
+    "Nov": 0.844,
+    "Dec": 0.94
+  },
+  "peak_season_month": "Jan",
+  "peak_season_index": 1.225,
+  "low_season_month": "Mar",
+  "low_season_index": 0.826,
+  "fy_consumption": {
+    "FY2024-25": 102869508.49,
+    "FY2025-26": 124938060.73,
+    "FY2026-27": 33768376.88
+  },
+  "yoy_growth": 0.215,
+  "top_project": {
+    "id": "PRJ-001",
+    "name": "Maternal & Child Health Programme - Korangi",
+    "value": 60615277.21,
+    "share": 0.232,
+    "ratio": 0.853
+  },
+  "bottom_project": {
+    "id": "PRJ-009",
+    "name": "Hepatitis B & C Screening - Keamari",
+    "value": 4464536.85,
+    "share": 0.017
+  },
+  "project_count": 10,
+  "lowest_ratio_project": {
+    "id": "PRJ-004",
+    "name": "Primary Healthcare Support - Tharparkar",
+    "ratio": 0.826
+  },
+  "highest_ratio_project": {
+    "id": "PRJ-007",
+    "name": "Community Health Worker Programme - Bin Qasim",
+    "ratio": 0.891
+  },
+  "cpb": {
+    "overall": 384.81,
+    "highest": {
+      "id": "PRJ-002",
+      "name": "Nutrition Stabilisation Centre - Malir",
+      "value": 500.18
+    },
+    "lowest": {
+      "id": "PRJ-009",
+      "name": "Hepatitis B & C Screening - Keamari",
+      "value": 226.58
+    },
+    "spread": 1.208
+  },
+  "projects_ending": [
+    {
+      "id": "PRJ-001",
+      "name": "Maternal & Child Health Programme - Korangi",
+      "end": "2026-12-31",
+      "days_left": 92,
+      "consumption": 60615277.21,
+      "budget": 93938000,
+      "unspent": 33322722.79
+    },
+    {
+      "id": "PRJ-002",
+      "name": "Nutrition Stabilisation Centre - Malir",
+      "end": "2026-12-31",
+      "days_left": 92,
+      "consumption": 45507230.07,
+      "budget": 60911000,
+      "unspent": 15403769.93
+    },
+    {
+      "id": "PRJ-004",
+      "name": "Primary Healthcare Support - Tharparkar",
+      "end": "2026-12-31",
+      "days_left": 92,
+      "consumption": 30079464.34,
+      "budget": 57939000,
+      "unspent": 27859535.66
+    },
+    {
+      "id": "PRJ-006",
+      "name": "Rural Health Centre Strengthening - Jamshoro",
+      "end": "2026-12-31",
+      "days_left": 92,
+      "consumption": 14971323.73,
+      "budget": 39855000,
+      "unspent": 24883676.27
+    },
+    {
+      "id": "PRJ-008",
+      "name": "Emergency Obstetric Care - Lyari",
+      "end": "2026-12-31",
+      "days_left": 92,
+      "consumption": 16788576.77,
+      "budget": 32642000,
+      "unspent": 15853423.23
+    },
+    {
+      "id": "PRJ-010",
+      "name": "Thalassaemia Support Programme - Gadap",
+      "end": "2026-12-31",
+      "days_left": 92,
+      "consumption": 24076941.05,
+      "budget": 43232000,
+      "unspent": 19155058.95
+    }
+  ],
+  "top_item": {
+    "id": "NUT-0001",
+    "name": "RUTF Plumpy'Nut 92 g Sachet",
+    "value": 22267666.5,
+    "share": 0.085
+  },
+  "concentration": {
+    "top10_share": 0.457,
+    "items_for_80": 32,
+    "item_count": 83
+  },
+  "category": {
+    "Medicines": {
+      "value": 88929770.93,
+      "share": 0.34
+    },
+    "Medical Consumables": {
+      "value": 70678971.23,
+      "share": 0.27
+    },
+    "Nutrition": {
+      "value": 69369900.38,
+      "share": 0.265
+    },
+    "Laboratory": {
+      "value": 21427187.14,
+      "share": 0.082
+    },
+    "General Items": {
+      "value": 11077955.93,
+      "share": 0.042
+    },
+    "Equipment": {
+      "value": 92160.49,
+      "share": 0.0
+    }
+  },
+  "price_risers": [
+    {
+      "id": "MED-0029",
+      "name": "Diclofenac 75 mg Injection",
+      "early": 28.99,
+      "late": 34.63,
+      "change": 0.194
+    },
+    {
+      "id": "CON-0012",
+      "name": "Alcohol Swab",
+      "early": 2.48,
+      "late": 2.95,
+      "change": 0.192
+    },
+    {
+      "id": "CON-0018",
+      "name": "Blood Transfusion Set",
+      "early": 197.85,
+      "late": 235.26,
+      "change": 0.189
+    },
+    {
+      "id": "CON-0011",
+      "name": "Nitrile Examination Gloves (Box 100)",
+      "early": 1314.02,
+      "late": 1560.76,
+      "change": 0.188
+    },
+    {
+      "id": "LAB-0003",
+      "name": "Rapid Diagnostic Test - Hepatitis B",
+      "early": 175.99,
+      "late": 209.0,
+      "change": 0.188
+    }
+  ],
+  "price_fallers": [
+    {
+      "id": "LAB-0006",
+      "name": "Blood Collection Tube EDTA 4 ml",
+      "early": 28.24,
+      "late": 31.8,
+      "change": 0.126
+    },
+    {
+      "id": "CON-0003",
+      "name": "Disposable Syringe 5 ml with Needle",
+      "early": 22.63,
+      "late": 25.59,
+      "change": 0.13
+    },
+    {
+      "id": "NUT-0002",
+      "name": "F-75 Therapeutic Milk 400 g",
+      "early": 712.45,
+      "late": 805.05,
+      "change": 0.13
+    }
+  ],
+  "avg_price_change": 0.162,
+  "price_items_measured": 77,
+  "stock": {
+    "total_value": 41090443.94,
+    "expired_value": 783764.18,
+    "expired_qty": 20343,
+    "expired_share": 0.0191,
+    "near_expiry_60": 950939.91,
+    "near_expiry_90": 636719.58,
+    "buckets": {
+      "0-30": 129501.7,
+      "31-60": 821438.21,
+      "61-90": 636719.58,
+      "91-180": 587694.79,
+      ">180": 38131325.48
+    },
+    "worst_expired_item": {
+      "name": "Hand Sanitiser 500 ml",
+      "value": 103807.8
+    }
+  },
+  "cover": {
+    "critical_count": 0,
+    "low_count": 0,
+    "under30": 0,
+    "under60": 3,
+    "slow_items": 5,
+    "slow_value": 168300.0,
+    "over_180_count": 6,
+    "over_180_value": 3446230.0,
+    "items_with_cover": 78,
+    "lowest": {
+      "name": "F-100 Therapeutic Milk 400 g",
+      "days": 32
+    },
+    "highest": {
+      "name": "Biohazard Waste Bag (Pack 50)",
+      "days": 245
+    }
+  },
+  "open_commitment": 4467950.63,
+  "open_commitment_lines": 320,
+  "cancelled_lines": 847,
+  "cancelled_value": 18943641.52,
+  "supplier": {
+    "avg_lead": 32,
+    "worst": {
+      "name": "NutriCare Importers",
+      "days": 57
+    },
+    "count": 12,
+    "top": {
+      "name": "Muller & Phipps Pakistan",
+      "value": 69475736.86
+    }
+  },
+  "blacklisted_in_history": 1,
+  "budget_over": [
+    {
+      "fy": "FY2025-26",
+      "cat": "Medical Consumables",
+      "budget": 22997000.0,
+      "consumption": 34812356.12,
+      "util": 1.514
+    },
+    {
+      "fy": "FY2025-26",
+      "cat": "Nutrition",
+      "budget": 26096000.0,
+      "consumption": 33064767.92,
+      "util": 1.267
+    },
+    {
+      "fy": "FY2025-26",
+      "cat": "Laboratory",
+      "budget": 8782000.0,
+      "consumption": 9624465.98,
+      "util": 1.096
+    }
+  ],
+  "budget_under": [
+    {
+      "fy": "FY2026-27",
+      "cat": "Equipment",
+      "budget": 5808000.0,
+      "consumption": 6782.37,
+      "util": 0.001
+    },
+    {
+      "fy": "FY2025-26",
+      "cat": "Equipment",
+      "budget": 11139000.0,
+      "consumption": 19898.29,
+      "util": 0.002
+    },
+    {
+      "fy": "FY2024-25",
+      "cat": "Equipment",
+      "budget": 12470000.0,
+      "consumption": 65479.83,
+      "util": 0.005
+    },
+    {
+      "fy": "FY2026-27",
+      "cat": "General Items",
+      "budget": 4820000.0,
+      "consumption": 1147844.26,
+      "util": 0.238
+    },
+    {
+      "fy": "FY2026-27",
+      "cat": "Medicines",
+      "budget": 26061000.0,
+      "consumption": 11075250.47,
+      "util": 0.425
+    }
+  ],
+  "budget_over_count": 3,
+  "dq": {
+    "duplicate_grc": 8,
+    "zero_price_po": 59,
+    "unattributed_lines": 468,
+    "unattributed_pct": 2.4,
+    "inactive_items": 2,
+    "blacklisted": 1,
+    "worst_month": {
+      "label": "Jan-2025",
+      "value": 592038.53,
+      "share": 0.048
+    }
+  },
+  "run_rate": 11256125.63,
+  "next_q_projection": 33768376.88,
+  "seasonal_next_q": 30351485.86,
+  "fy2026_27": {
+    "ytd": 33768376.88,
+    "months": 3,
+    "burn": 11256125.63,
+    "projection": 135073507.52
+  },
+  "budget_fy27": 67078000,
+  "fy27_proj_util": 2.014,
+  "requirement_proposal": [
+    {
+      "id": "NUT-0003",
+      "name": "F-100 Therapeutic Milk 400 g",
+      "cover": 32,
+      "onhand": 624,
+      "proposal": 547,
+      "unit": "Tin",
+      "cost": 415720
+    },
+    {
+      "id": "MED-0024",
+      "name": "Artemether + Lumefantrine 20/120 mg",
+      "cover": 46,
+      "onhand": 1080,
+      "proposal": 344,
+      "unit": "Tablet",
+      "cost": 40592
+    },
+    {
+      "id": "MED-0023",
+      "name": "Mebendazole 100 mg Tablet",
+      "cover": 55,
+      "onhand": 19000,
+      "proposal": 1769,
+      "unit": "Tablet",
+      "cost": 4599.4
+    },
+    {
+      "id": "CON-0017",
+      "name": "Suture Polyglactin 2-0",
+      "cover": 62,
+      "onhand": 588,
+      "proposal": 0,
+      "unit": "Piece",
+      "cost": 0
+    },
+    {
+      "id": "NUT-0007",
+      "name": "Infant Formula, Therapeutic (Lactogen-free)",
+      "cover": 62,
+      "onhand": 288,
+      "proposal": 0,
+      "unit": "Tin",
+      "cost": 0
+    },
+    {
+      "id": "MED-0008",
+      "name": "Ibuprofen 400 mg Tablet",
+      "cover": 64,
+      "onhand": 31000,
+      "proposal": 0,
+      "unit": "Tablet",
+      "cost": 0.0
+    },
+    {
+      "id": "MED-0032",
+      "name": "Folic Acid 5 mg Tablet",
+      "cover": 65,
+      "onhand": 43000,
+      "proposal": 0,
+      "unit": "Tablet",
+      "cost": 0.0
+    },
+    {
+      "id": "MED-0015",
+      "name": "Magnesium Sulphate 50% 10 ml",
+      "cover": 65,
+      "onhand": 510,
+      "proposal": 0,
+      "unit": "Ampoule",
+      "cost": 0
+    },
+    {
+      "id": "MED-0033",
+      "name": "Calcium Carbonate + Vitamin D3",
+      "cover": 74,
+      "onhand": 8500,
+      "proposal": 0,
+      "unit": "Tablet",
+      "cost": 0.0
+    },
+    {
+      "id": "MED-0006",
+      "name": "Ciprofloxacin 500 mg Tablet",
+      "cover": 74,
+      "onhand": 5400,
+      "proposal": 0,
+      "unit": "Tablet",
+      "cost": 0.0
+    }
+  ],
+  "narrative": {
+    "monsoon": "monsoon / diarrhoeal-disease season (Jul-Sep) drives ORS, IV fluid and antibiotic demand",
+    "funding": "a funding interruption in Mar-2026 suppressed consumption for one month"
+  }
+}

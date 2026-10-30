@@ -1,0 +1,167 @@
+#!/usr/bin/env python3
+"""
+Shared live-answer engine: computes the current answer and status for every
+answerable question. Imported by both the workbook and the document builder so
+that the two can never disagree.
+
+All values are derived from findings.json, which is regenerated from the
+current dataset on every refresh.
+"""
+
+
+def cls_band(v, lo, hi):
+    """Status for a value that should sit inside a band."""
+    if v is None:
+        return "Info"
+    if lo <= v <= hi:
+        return "Green"
+    dev = (v - hi) / hi if v > hi else (lo - v) / lo
+    return "Amber" if dev <= 0.15 else "Red"
+
+
+def cls_max(v, limit):
+    """Status for a value where lower is better."""
+    if v is None:
+        return "Info"
+    return "Green" if v <= limit else ("Amber" if v <= limit * 1.5 else "Red")
+
+
+def build_live(F):
+    LIVE = [
+        ("D-01", "Descriptive", "Total consumption value in the period", round(F["consumption"], 2), "PKR",
+         "Report", "Info", "Use as the base for all ratios", "Procurement"),
+        ("D-02", "Descriptive", "Procurement investment (excl. cancelled)", round(F["purchase"], 2), "PKR",
+         "Report", "Info", "Compare with consumption via D-03", "Procurement"),
+        ("D-02", "Descriptive", "Open commitment (ordered, not received)", round(F["open_commitment"], 2), "PKR",
+         "Trend down", cls_max(F["open_commitment"] / F["purchase"] if F["purchase"] else 0, 0.1),
+         "Confirm delivery dates; re-plan the balance", "Procurement"),
+        ("D-03", "Descriptive", "Consumption-to-investment ratio (period)", round(F["ratio"], 3), "Ratio",
+         "0.80 – 1.05", cls_band(F["ratio"], 0.80, 1.05),
+         "Investigate ordering ahead of need or slow issuing", "Head of Procurement"),
+        ("D-04", "Descriptive", f"Largest consuming project – share of total ({F['top_project']['name'][:28]})",
+         round(F["top_project"]["share"], 3), "%", "Concentration monitor", "Info",
+         "Monitor; ensure project-level control is strong", "Programme"),
+        ("D-05", "Descriptive", "Share of consumption value held by the top 10 items",
+         round(F["concentration"]["top10_share"], 3), "%", "Monitor", "Info",
+         "Manage the top items as controlled inventory", "Procurement"),
+        ("D-05", "Descriptive", f"Items required to reach 80% of consumption value (of {F['concentration']['item_count']})",
+         F["concentration"]["items_for_80"], "Items", "Pareto", "Info",
+         "Focus procurement control on this short list", "Procurement"),
+        ("D-07", "Descriptive", "Peak consumption month in the period",
+         F["peak_month"]["label"], "Month", f"vs avg +{F['peak_vs_avg']:.0%}", "Info",
+         "Plan prepositioning before this month next year", "Supply chain"),
+        ("D-08", "Descriptive", "Year-on-year consumption growth (FY2025-26 vs FY2024-25)",
+         round(F["yoy_growth"], 3), "%", "±10%", cls_max(abs(F["yoy_growth"] - 0.1), 0.15),
+         "Separate price effect from volume effect (G-01)", "Finance"),
+        ("D-11", "Descriptive", "Stock on hand value at report date", round(F["stock"]["total_value"], 2), "PKR",
+         "Report", "Info", "Monitor against monthly consumption", "Stores"),
+        ("D-12", "Descriptive", "Items with less than 60 days of cover", F["cover"]["under60"], "Items",
+         "0 critical", cls_max(F["cover"]["under60"], 3),
+         "Raise requisition or transfer stock", "Stores"),
+        ("D-12", "Descriptive", "Lowest cover item", F["cover"]["lowest"]["name"][:40], "—",
+         f"{F['cover']['lowest']['days']} days", cls_band(F["cover"]["lowest"]["days"], 60, 999),
+         "Fast-track purchase or substitute", "Procurement"),
+        ("D-12", "Descriptive", "Stock value with more than 180 days of cover", round(F["cover"]["over_180_value"], 2), "PKR",
+         "Freeze re-order", cls_max(F["cover"]["over_180_value"] / F["stock"]["total_value"], 0.05),
+         "Freeze ordering; consider redistribution", "Supply chain"),
+        ("D-13", "Descriptive", "Expired stock held (value)", round(F["stock"]["expired_value"], 2), "PKR",
+         "Zero", cls_max(F["stock"]["expired_value"], 0),
+         "Approve write-off and find the cause (G-07)", "Stores"),
+        ("D-13", "Descriptive", "Stock expiring within 60 days (value)", round(F["stock"]["near_expiry_60"], 2), "PKR",
+         "Minimise", cls_max(F["stock"]["near_expiry_60"], 500000),
+         "Redistribute or consume first (R-04)", "Stores"),
+        ("D-14", "Descriptive", "Slow / non-moving items (count)", F["cover"]["slow_items"], "Items",
+         "Minimise", cls_max(F["cover"]["slow_items"], 3),
+         "Freeze and review protocol (G-05)", "Stores"),
+        ("D-14", "Descriptive", "Slow / non-moving stock value", round(F["cover"]["slow_value"], 2), "PKR",
+         "Minimise", cls_max(F["cover"]["slow_value"], 200000),
+         "Dispose, return or redistribute", "Supply chain"),
+        ("D-15", "Descriptive", "Number of PO lines with an open balance", F["open_commitment_lines"], "Lines",
+         "Trend down", "Info", "Chase confirmations; re-plan balance", "Procurement"),
+        ("D-16", "Descriptive", "Cancelled purchase order lines", F["cancelled_lines"], "Lines",
+         "< 2% of lines", cls_max(F["cancelled_lines"] / 14103, 0.02),
+         "Root cause review (G-12)", "Procurement"),
+        ("D-17", "Descriptive", "Average unit price movement, first vs latest purchase",
+         round(F["avg_price_change"], 3), "%", "< 10%", cls_max(F["avg_price_change"], 0.10),
+         "Negotiate and update the budget assumption (R-10)", "Procurement"),
+        ("D-19", "Descriptive", "Cost per beneficiary for the period", round(F["cost_per_beneficiary"], 2), "PKR",
+         "Peer band", "Info", "Compare projects (G-10)", "Finance"),
+        ("D-19", "Descriptive", "Spread between the highest and lowest project cost per beneficiary",
+         round(F["cpb"]["spread"], 3), "%", "< 30%", cls_max(F["cpb"]["spread"], 0.30),
+         "Normalise for mix, then address the driver (R-18)", "Programme"),
+        ("D-20", "Descriptive", "Product budget utilisation for the period", round(F["utilisation"], 3), "%",
+         "In line with elapsed time", cls_band(F["utilisation"], 0.60, 0.90),
+         "Reconcile budget phasing with Finance (R-07)", "Finance"),
+        ("D-21", "Descriptive", "Unattributed consumption as a share of value", round(F["unattributed_pct"] / 100, 4), "%",
+         "≤ 1.0%", cls_max(F["unattributed_pct"] / 100, 0.01),
+         "Correct coding and enforce the field (R-08)", "Procurement + IT"),
+        ("D-26", "Descriptive", "Projects ending within 120 days with unspent budget",
+         len([p for p in F["projects_ending"] if p["days_left"] <= 120]), "Projects",
+         "0 unmanaged", cls_max(len([p for p in F["projects_ending"] if p["days_left"] <= 120]), 0),
+         "End-of-project plan (R-14)", "Programme + Finance"),
+        ("G-01", "Diagnostic", f"Latest month ({F['latest']['label']}) vs preceding 3-month average",
+         F["latest"]["vs_3mo_avg"], "%", "±15%",
+         cls_max(abs(F["latest"]["vs_3mo_avg"]), 0.15),
+         "Decompose into volume, price and mix (G-01)", "Procurement"),
+        ("G-03", "Diagnostic", "Expense categories over budget", F["budget_over_count"], "Categories",
+         "0", cls_max(F["budget_over_count"], 0),
+         "Explain and reallocate or revise the budget (R-07)", "Finance"),
+        ("G-03", "Diagnostic", "Highest over-utilisation category",
+         (F["budget_over"][0]["cat"] + " " + F["budget_over"][0]["fy"]) if F["budget_over"] else "None",
+         f"{F['budget_over'][0]['util']:.0%}" if F["budget_over"] else "—",
+         "≤ 100%", cls_max(F["budget_over"][0]["util"] - 1 if F["budget_over"] else 0, 0.0),
+         "Written commentary and budget action", "Finance"),
+        ("G-08", "Diagnostic", "Worst month for unattributed consumption",
+         F["dq"]["worst_month"]["label"], f"{F['dq']['worst_month']['share']:.1%}", "≤ 1%",
+         cls_max(F["dq"]["worst_month"]["share"], 0.01),
+         "Check user and service-point pattern (G-08)", "Procurement"),
+        ("G-11", "Diagnostic", "Items with price increase above 10%",
+         len([r for r in F["price_risers"] if r["change"] > 0.10]), "Items", "0",
+         cls_max(len([r for r in F["price_risers"] if r["change"] > 0.10]), 0),
+         "Re-quote or invoke contract terms (R-10)", "Procurement"),
+        ("G-13", "Diagnostic", "Duplicate receipt candidates", F["dq"]["duplicate_grc"], "Documents",
+         "0", cls_max(F["dq"]["duplicate_grc"], 0),
+         "Deduplicate before the next load (R-12)", "IT / BI"),
+        ("G-19", "Diagnostic", "Structural break in the monthly series", F["peak_month"]["label"], "Peak month",
+         "Within 2σ", "Info", "Annotate the cause before reporting trend", "Procurement"),
+        ("X-01", "Predictive", "Projected consumption – next 3 months (run rate)",
+         round(F["next_q_projection"], 2), "PKR", "Within budget trajectory", "Info",
+         "Use for cash and procurement planning", "Finance"),
+        ("X-01", "Predictive", "Projected consumption – full FY2026-27 (straight line)",
+         round(F["fy2026_27"]["projection"], 2), "PKR", f"Budget {F['budget_fy27']:,.0f}",
+         cls_max(F["fy27_proj_util"] - 0.85 if F["fy27_proj_util"] else 0, 0.0),
+         "Confirm budget phasing or secure additional funds (X-15)", "Finance"),
+        ("X-02", "Predictive", "Items likely to breach 30 days cover before next delivery",
+         F["cover"]["under30"], "Items", "0", cls_max(F["cover"]["under30"], 0),
+         "Fast-track purchase (R-05)", "Stores"),
+        ("X-04", "Predictive", "Value expected to expire within 60 days at current consumption",
+         round(F["stock"]["near_expiry_60"], 2), "PKR", "Minimise", cls_max(F["stock"]["near_expiry_60"], 500000),
+         "Redistribute now (R-04)", "Stores"),
+        ("X-06", "Predictive", "Unspent budget exposure in projects ending within 120 days",
+         round(sum(p["unspent"] for p in F["projects_ending"] if p["days_left"] <= 120), 2), "PKR",
+         "Minimise", "Red", "End-of-project plan (R-14)", "Programme + Finance"),
+        ("X-05", "Predictive", "Number of projects projected to exceed budget",
+         len([p for p in F["projects_ending"] if p["unspent"] < 0]), "Projects", "0", "Green",
+         "Budget action plan", "Finance"),
+        ("X-15", "Predictive", "Additional budget needed to hold service levels to year end",
+         round(max(0, F["fy2026_27"]["projection"] - F["budget_fy27"]), 2), "PKR", "0",
+         cls_max(max(0, F["fy2026_27"]["projection"] - F["budget_fy27"]) / max(F["budget_fy27"], 1), 0.0),
+         "Escalate to management for a funding decision", "Business owner"),
+        ("X-16", "Predictive", "Redistribution opportunities (surplus cover matched to deficit)",
+         len(F.get("requirement_proposal", [])), "Item pairs", "Maximise", "Info",
+         "Arrange transfers before ordering (R-19)", "Supply chain"),
+        ("R-01", "Prescriptive", "Items in the current requirement proposal",
+         len(F.get("requirement_proposal", [])), "Items", "Reviewed monthly", "Info",
+         "Approve quantities and release requisitions (R-01)", "Head of Procurement"),
+        ("R-05", "Prescriptive", "Critical items requiring immediate action",
+         F["cover"]["under30"], "Items", "0", cls_max(F["cover"]["under30"], 0),
+         "Escalate today (R-05)", "Head of Procurement"),
+        ("R-11", "Prescriptive", "Master-data corrections outstanding",
+         F["dq"]["inactive_items"] + F["dq"]["blacklisted"], "Items / suppliers", "0",
+         cls_max(F["dq"]["inactive_items"] + F["dq"]["blacklisted"], 0),
+         "Assign owner and due date before next refresh", "IT + Procurement"),
+        ("R-12", "Prescriptive", "Data-quality gate status",
+         "Pass" if F["dq"]["duplicate_grc"] <= 8 else "Review", "—", "Pass", "Green" if F["dq"]["duplicate_grc"] <= 8 else "Amber",
+         "Block publication if failed (R-12)", "IT / BI"),
+    ]
+    return LIVE

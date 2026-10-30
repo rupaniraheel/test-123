@@ -426,6 +426,11 @@ for (pid, iid), months in demand.items():
         status = po_rows[-1][14]
         if status == "Cancelled":
             continue
+        # recent orders may still be in transit: part-received at the extract date.
+        # this is what creates open commitments and explains the lower issues in the last months
+        partial = (po_date >= date(2026, 6, 1)) and random.random() < 0.42
+        if partial:
+            po_rows[-1][14] = "Partially Received"
         n_grn = random.choice([1, 1, 1, 2])
         remaining = order_qty
         grn_base = po_date + timedelta(days=lead + random.randint(-5, 10))
@@ -438,6 +443,10 @@ for (pid, iid), months in demand.items():
                     rec = remaining
             if rec <= 0:
                 continue
+            if partial and g == n_grn - 1:
+                rec = round_to_pack(rec * random.uniform(0.45, 0.75), pack)
+                if rec <= 0:
+                    continue
             remaining -= rec
             g_date = grn_base + timedelta(days=g * random.randint(4, 14))
             key = (f"{iid[:3]}", g_date.strftime("%y%m"))
@@ -868,6 +877,10 @@ summary = {
     "beneficiaries": int(sum(r[4] for r in service)),
     "po_lines": len(po_rows), "grn_lines": len(grn_rows), "issue_lines": len(issue_rows),
     "shortfalls": len(shortfalls),
+    "open_commitment": round(sum(max(0.0, (p[9] or 0) - sum(g[6] for g in grn_rows if g[2] == p[0]))
+                                 * (p[11] or 0) for p in po_rows if p[14] != "Cancelled"), 2),
+    "open_commitment_lines": sum(1 for p in po_rows if p[14] != "Cancelled" and
+                                 (p[9] or 0) - sum(g[6] for g in grn_rows if g[2] == p[0]) > 0),
     "projects": len(projects), "items": len(items), "suppliers": len(suppliers),
 }
 with open(os.path.join(OUT_DIR, "summary.json"), "w") as f:
